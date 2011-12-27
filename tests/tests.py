@@ -1,6 +1,8 @@
-import unittest, logging, json
+import unittest, logging, json, sys
 from StringIO import StringIO
-from jsonlogger import jsonlogger
+
+sys.path.append('src')
+import jsonlogger
 
 class testJsonLogger(unittest.TestCase):
     def setUp(self):
