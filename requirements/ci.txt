@@ -1,0 +1,3 @@
+coverage
+pylint
+unittest-xml-reporting
