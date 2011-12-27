@@ -1,7 +1,5 @@
-import unittest, sys, logging
+import unittest, logging
 from StringIO import StringIO
-
-sys.path += ['../src']
 from jsonlogger import jsonlogger
 
 class testJsonLogger(unittest.TestCase):
