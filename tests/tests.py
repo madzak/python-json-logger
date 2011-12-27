@@ -2,7 +2,7 @@ import unittest, sys, logging
 from StringIO import StringIO
 
 sys.path += ['../src']
-import jsonlogger
+from jsonlogger import jsonlogger
 
 class testJsonLogger(unittest.TestCase):
     def setUp(self):

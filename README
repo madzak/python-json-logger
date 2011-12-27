@@ -5,10 +5,6 @@ This library is provided to allow standard python logging to output log data as 
 Installing
 ==========
 
-Using pip:
-
-    pip install jsonlogger
-
 Manual:
 
     python setup.py install
@@ -19,7 +15,7 @@ Usage
 Json outputs are provided by the JsonFormatter logging formatter. You can add the customer formatter like below:
 
     import logging
-    import jsonlogger
+    from jsonlogger import jsonlogger
 
     logger = logging.getLogger()
 
