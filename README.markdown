@@ -14,7 +14,7 @@ Usage
 
 Json outputs are provided by the JsonFormatter logging formatter. You can add the customer formatter like below:
 
-    ```python
+```python
     import logging
     from jsonlogger import jsonlogger
 
@@ -24,4 +24,4 @@ Json outputs are provided by the JsonFormatter logging formatter. You can add th
     formatter = jsonlogger.JsonFormatter()
     logHandler.setFormatter(formatter)
     logger.addHandler(logHandler)
-    ```
+```
