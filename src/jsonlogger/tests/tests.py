@@ -1,4 +1,4 @@
-import unittest, logging
+import unittest, logging, json
 from StringIO import StringIO
 from jsonlogger import jsonlogger
 
@@ -11,13 +11,60 @@ class testJsonLogger(unittest.TestCase):
         self.logHandler = logging.StreamHandler(self.buffer)
         self.logger.addHandler(self.logHandler)
 
-    def testJSONOutput(self):
+    def testDefaultFormat(self):
         fr = jsonlogger.JsonFormatter()
         self.logHandler.setFormatter(fr)
 
-        self.logger.info("testing stream")
+        msg = "testing logging format"
+        self.logger.info(msg)
+        logJson = json.loads(self.buffer.getvalue())
 
-        self.assertEqual(self.buffer.getvalue(), '{"message": "testing stream"}\n')
+        self.assertEqual(logJson["message"], msg)
+
+    def testFormatKeys(self):
+        supported_keys = [
+            'asctime',
+            'created',
+            'filename',
+            'funcName',
+            'levelname',
+            'levelno',
+            'lineno',
+            'module',
+            'msecs',
+            'message',
+            'name',
+            'pathname',
+            'process',
+            'processName',
+            'relativeCreated',
+            'thread',
+            'threadName'
+        ]
+
+        log_format = ' '.join(['%({})'] * len(supported_keys))
+        custom_format = log_format.format(*supported_keys)
+
+        fr = jsonlogger.JsonFormatter(custom_format)
+        self.logHandler.setFormatter(fr)
+
+        msg = "testing logging format"
+        self.logger.info(msg)
+        logJson = json.loads(self.buffer.getvalue())
+
+        for supported_key in supported_keys:
+            self.assertTrue(logJson.has_key(supported_key))
+
+    @unittest.expectedFailure
+    def testUnknownFormatKey(self):
+        fr = jsonlogger.JsonFormatter('%(unknown_key)s %(message)s')
+        self.logHandler.setFormatter(fr)
+
+        msg = "testing logging format"
+        self.logger.info(msg)
+        logJson = json.loads(self.buffer.getvalue())
+
+        self.assertEqual(logJson["message"], msg)
 
 if __name__=='__main__':
     unittest.main()
