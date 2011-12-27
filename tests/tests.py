@@ -1,4 +1,4 @@
-import unittest, logging, json, sys
+import unittest, logging, json, sys, xmlrunner
 from StringIO import StringIO
 
 sys.path.append('src')
@@ -69,4 +69,5 @@ class testJsonLogger(unittest.TestCase):
         self.assertEqual(logJson["message"], msg)
 
 if __name__=='__main__':
-    unittest.main()
+    testSuite = unittest.TestLoader().loadTestsFromTestCase(testJsonLogger)
+    xmlrunner.XMLTestRunner(output='reports').run(testSuite)
