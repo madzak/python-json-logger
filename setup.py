@@ -4,7 +4,7 @@ if sys.version_info < (2, 7):
     print sys.stderror, "Your python is {}".format(sys.version)
     sys.exit(1)
 
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name = "python-json-logger",
@@ -14,8 +14,8 @@ setup(
     description = "A python library adding a json log formatter",
     author = "Zakaria Zajac",
     author_email = "zak@madzak.com",
-    packages = find_packages('src'),
-    package_dirs = {'': 'src'},
+    package_dir = {'': 'src'},
+    packages = ['jsonlogger'],
     install_requires = ['setuptools'],
     classifiers = [
         'Development Status :: 1 - Alpha',
