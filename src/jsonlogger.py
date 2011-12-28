@@ -6,16 +6,10 @@ from datetime import datetime
 class JsonFormatter(logging.Formatter):
     """A custom formatter to format logging records as json objects"""
 
-    def create_timestamp(self, record):
-        """Creates a human readable timestamp for a log records created date"""
-        
-        timestamp = datetime.fromtimestamp(record.created)
-        return timestamp.strftime("%y-%m-%d %H:%M:%S,%f"),
-
     def format(self, record):
         """Formats a log record and serializes to json"""
         mappings = {
-            'asctime': self.create_timestamp,
+            'asctime': create_timestamp,
             'message': lambda r: r.msg,
         }
 
@@ -25,9 +19,14 @@ class JsonFormatter(logging.Formatter):
         log_record = {}
         for formatter in formatters:
             try:
-                log_record[formatter] = mappings[formatter](record);
+                log_record[formatter] = mappings[formatter](record)
             except KeyError:
                 log_record[formatter] = record.__dict__[formatter]
 
         return json.dumps(log_record)
 
+def create_timestamp(record):
+    """Creates a human readable timestamp for a log records created date"""
+    
+    timestamp = datetime.fromtimestamp(record.created)
+    return timestamp.strftime("%y-%m-%d %H:%M:%S,%f"),
