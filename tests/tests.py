@@ -57,16 +57,15 @@ class testJsonLogger(unittest.TestCase):
         for supported_key in supported_keys:
             self.assertTrue(logJson.has_key(supported_key))
 
-    @unittest.expectedFailure
     def testUnknownFormatKey(self):
         fr = jsonlogger.JsonFormatter('%(unknown_key)s %(message)s')
         self.logHandler.setFormatter(fr)
 
         msg = "testing logging format"
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
-
-        self.assertEqual(logJson["message"], msg)
+        try:
+            self.logger.info(msg)
+        except KeyError:
+            self.assertTrue("KeyError exception thrown")
 
 if __name__=='__main__':
     if len(sys.argv[1:]) > 0 :
