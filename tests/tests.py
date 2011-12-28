@@ -69,5 +69,9 @@ class testJsonLogger(unittest.TestCase):
         self.assertEqual(logJson["message"], msg)
 
 if __name__=='__main__':
-    testSuite = unittest.TestLoader().loadTestsFromTestCase(testJsonLogger)
-    xmlrunner.XMLTestRunner(output='reports').run(testSuite)
+    if len(sys.argv[1:]) > 0 :
+        if sys.argv[1] == 'xml':
+            testSuite = unittest.TestLoader().loadTestsFromTestCase(testJsonLogger)
+            xmlrunner.XMLTestRunner(output='reports').run(testSuite)
+    else:
+        unittest.main()
