@@ -6,6 +6,10 @@ from datetime import datetime
 class JsonFormatter(logging.Formatter):
     """A custom formatter to format logging records as json objects"""
 
+    def parse(self):
+        standard_formatters = re.compile(r'\((.*?)\)', re.IGNORECASE)
+        return standard_formatters.findall(self._fmt)
+
     def format(self, record):
         """Formats a log record and serializes to json"""
         mappings = {
@@ -13,9 +17,8 @@ class JsonFormatter(logging.Formatter):
             'message': lambda r: r.msg,
         }
 
-        standard_formatters = re.compile(r'\((.*?)\)', re.IGNORECASE)
-        formatters = standard_formatters.findall(self._fmt)
-        
+        formatters = self.parse()
+
         log_record = {}
         for formatter in formatters:
             try:
@@ -27,6 +30,6 @@ class JsonFormatter(logging.Formatter):
 
 def create_timestamp(record):
     """Creates a human readable timestamp for a log records created date"""
-    
+
     timestamp = datetime.fromtimestamp(record.created)
     return timestamp.strftime("%y-%m-%d %H:%M:%S,%f"),
