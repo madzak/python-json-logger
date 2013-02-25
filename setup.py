@@ -19,12 +19,12 @@ setup(
     test_suite = "tests.tests",
     install_requires = ['setuptools'],
     classifiers = [
-        'Development Status :: 1 - Alpha',
+        'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
-        'Operation System :: OS Independent',
+        'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2.7',
-        'Topic :: Logging',
+        'Topic :: System :: Logging',
     ]
 )
