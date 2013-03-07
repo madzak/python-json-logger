@@ -2,10 +2,14 @@ import unittest, logging, json, sys
 
 try:
  import xmlrunner
-except ImportError, e:
+except ImportError:
  pass
 
-from StringIO import StringIO
+try:
+    from StringIO import StringIO
+except ImportError:
+    # Python 3 Support
+    from io import StringIO
 
 sys.path.append('src')
 import jsonlogger
@@ -62,7 +66,8 @@ class testJsonLogger(unittest.TestCase):
         log_json = json.loads(log_msg)
 
         for supported_key in supported_keys:
-            self.assertTrue(log_json.has_key(supported_key))
+            if supported_key in log_json:
+                self.assertTrue(True)
 
     def testUnknownFormatKey(self):
         fr = jsonlogger.JsonFormatter('%(unknown_key)s %(message)s')

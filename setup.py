@@ -1,7 +1,7 @@
 import sys
 if sys.version_info < (2, 6):
-    print sys.stderr, "{}: need Python 2.6 or later.".format(sys.argv[0])
-    print sys.stderror, "Your python is {}".format(sys.version)
+    print(sys.stderr, "{}: need Python 2.6 or later.".format(sys.argv[0]))
+    print(sys.stderror, "Your python is {}".format(sys.version))
     sys.exit(1)
 
 from setuptools import setup
@@ -16,6 +16,7 @@ setup(
     author_email = "zak@madzak.com",
     package_dir = {'': 'src'},
     packages = [''],
+#    use_2to3 = True, 
     test_suite = "tests.tests",
     install_requires = ['setuptools'],
     classifiers = [
