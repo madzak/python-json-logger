@@ -8,7 +8,7 @@ from setuptools import setup
 
 setup(
     name = "python-json-logger",
-    version = "0.0.1",
+    version = "0.0.2",
     url = "http://github.com/madzak/python-json-logger",
     license = "BSD",
     description = "A python library adding a json log formatter",
