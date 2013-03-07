@@ -68,7 +68,7 @@ class testJsonLogger(unittest.TestCase):
         for supported_key in supported_keys:
             if supported_key in log_json:
                 self.assertTrue(True)
-
+    
     def testUnknownFormatKey(self):
         fr = jsonlogger.JsonFormatter('%(unknown_key)s %(message)s')
         self.logHandler.setFormatter(fr)

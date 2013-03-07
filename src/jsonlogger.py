@@ -20,7 +20,13 @@ class JsonFormatter(logging.Formatter):
         if "asctime" in formatters:
             record.asctime = self.formatTime(record, self.datefmt)
 
-        log_record = {}
+        try:
+            #Support order in python 2.7 and 3
+            from collections import OrderedDict
+            log_record = OrderedDict()
+        except:
+            log_record = {}
+
         for formatter in formatters:
             log_record[formatter] = record.__dict__[formatter]
 
