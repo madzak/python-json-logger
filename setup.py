@@ -1,6 +1,6 @@
 import sys
-if sys.version_info < (2, 7):
-    print sys.stderr, "{}: need Python 2.7 or later.".format(sys.argv[0])
+if sys.version_info < (2, 6):
+    print sys.stderr, "{}: need Python 2.6 or later.".format(sys.argv[0])
     print sys.stderror, "Your python is {}".format(sys.version)
     sys.exit(1)
 

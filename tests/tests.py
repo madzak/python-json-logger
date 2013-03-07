@@ -50,8 +50,8 @@ class testJsonLogger(unittest.TestCase):
             'threadName'
         ]
 
-        log_format = ' '.join(['%({})'] * len(supported_keys))
-        custom_format = log_format.format(*supported_keys)
+        log_format = lambda x : ['%({0:s})'.format(i) for i in x] 
+        custom_format = ' '.join(log_format(supported_keys))
 
         fr = jsonlogger.JsonFormatter(custom_format)
         self.logHandler.setFormatter(fr)
