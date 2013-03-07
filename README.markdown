@@ -4,6 +4,13 @@ This library is provided to allow standard python logging to output log data as 
 
 Installing
 ==========
+Pip:
+
+    pip install python-json-logger
+
+Pypi:
+
+   https://pypi.python.org/pypi/python-json-logger 
 
 Manual:
 
