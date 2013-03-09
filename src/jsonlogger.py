@@ -2,6 +2,11 @@ import logging
 import json
 import re
 
+#Support order in python 2.7 and 3
+try:
+    from collections import OrderedDict
+except:
+    pass
 
 class JsonFormatter(logging.Formatter):
     """A custom formatter to format logging records as json objects"""
@@ -21,8 +26,6 @@ class JsonFormatter(logging.Formatter):
             record.asctime = self.formatTime(record, self.datefmt)
 
         try:
-            #Support order in python 2.7 and 3
-            from collections import OrderedDict
             log_record = OrderedDict()
         except:
             log_record = {}
