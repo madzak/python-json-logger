@@ -73,7 +73,7 @@ class JsonFormatter(logging.Formatter):
 
     def parse(self):
         """Parses format string looking for substitutions"""
-        standard_formatters = re.compile(r'\((.*?)\)', re.IGNORECASE)
+        standard_formatters = re.compile(r'\((.+?)\)', re.IGNORECASE)
         return standard_formatters.findall(self._fmt)
 
     def format(self, record):
