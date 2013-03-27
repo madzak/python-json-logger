@@ -54,7 +54,8 @@ class JsonFormatter(logging.Formatter):
         """
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
-        super(JsonFormatter, self).__init__(*args, **kwargs)
+        #super(JsonFormatter, self).__init__(*args, **kwargs)
+        logging.Formatter.__init__(self, *args, **kwargs)
         if not self.json_encoder and not self.json_default:
             def _default_json_handler(obj):
                 '''Prints dates in ISO format'''
