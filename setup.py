@@ -15,7 +15,7 @@ setup(
     author = "Zakaria Zajac",
     author_email = "zak@madzak.com",
     package_dir = {'': 'src'},
-    packages = [''],
+    packages = ['jsonlogger'],
 #    use_2to3 = True, 
     test_suite = "tests.tests",
     install_requires = ['setuptools'],
