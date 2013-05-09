@@ -94,7 +94,7 @@ class JsonFormatter(logging.Formatter):
             log_record = {}
 
         for field in self._required_fields:
-            log_record[field] = record.__dict__[field]
+            log_record[field] = record.__dict__.get(field)
         log_record.update(extras)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
 
