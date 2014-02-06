@@ -51,9 +51,12 @@ class JsonFormatter(logging.Formatter):
         :param json_default: a function for encoding non-standard objects
             as outlined in http://docs.python.org/2/library/json.html
         :param json_encoder: optional custom encoder
+        :param prefix: an optional string prefix added at the beggining of
+            the formatted string
         """
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
+        self.prefix = kwargs.pop("prefix", "")
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
         if not self.json_encoder and not self.json_default:
@@ -99,6 +102,6 @@ class JsonFormatter(logging.Formatter):
         log_record.update(extras)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
 
-        return json.dumps(log_record,
-                          default=self.json_default,
-                          cls=self.json_encoder)
+        return "%s%s" % (self.prefix, json.dumps(log_record,
+                            default=self.json_default,
+                            cls=self.json_encoder))
