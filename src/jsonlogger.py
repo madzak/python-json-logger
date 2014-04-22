@@ -31,7 +31,7 @@ def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     :param target: dict to update
     :param reserved: dict or list with reserved keys to skip
     """
-    for key, value in record.__dict__.iteritems():
+    for key, value in record.__dict__.items():
         #this allows to have numeric keys
         if (key not in reserved
             and not (hasattr(key,"startswith") and key.startswith('_'))
