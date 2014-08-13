@@ -31,7 +31,7 @@ def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     :param target: dict to update
     :param reserved: dict or list with reserved keys to skip
     """
-    for key, value in record.__dict__.iteritems():
+    for key, value in record.__dict__.items():
         #this allows to have numeric keys
         if (key not in reserved
             and not (hasattr(key,"startswith") and key.startswith('_'))
@@ -98,10 +98,11 @@ class JsonFormatter(logging.Formatter):
             log_record = {}
 
         for field in self._required_fields:
-            log_record[field] = record.__dict__[field]
+            log_record[field] = record.__dict__.get(field)
         log_record.update(extras)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
 
-        return "%s%s" % (self.prefix, json.dumps(log_record,
-                            default=self.json_default,
-                            cls=self.json_encoder))
+        return "%s%s" % (self.prefix,
+                         json.dumps(log_record,
+                                    default=self.json_default,
+                                    cls=self.json_encoder))

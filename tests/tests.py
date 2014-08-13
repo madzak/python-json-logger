@@ -72,8 +72,6 @@ class TestJsonLogger(unittest.TestCase):
     
     def testUnknownFormatKey(self):
         fr = jsonlogger.JsonFormatter('%(unknown_key)s %(message)s')
-        self.assertRaises(KeyError,
-                          fr.format, logging.makeLogRecord({"msg":"test"}))
 
         self.logHandler.setFormatter(fr)
         msg = "testing unknown logging format"
