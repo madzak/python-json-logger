@@ -23,6 +23,7 @@ RESERVED_ATTRS = (
 
 RESERVED_ATTR_HASH = dict(zip(RESERVED_ATTRS, RESERVED_ATTRS))
 
+
 def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     """
     Merges extra attributes from LogRecord object into target dictionary
@@ -34,10 +35,11 @@ def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     for key, value in record.__dict__.items():
         #this allows to have numeric keys
         if (key not in reserved
-            and not (hasattr(key,"startswith") and key.startswith('_'))
-            ):
+            and not (hasattr(key, "startswith")
+                     and key.startswith('_'))):
             target[key] = value
     return target
+
 
 class JsonFormatter(logging.Formatter):
     """
@@ -63,9 +65,12 @@ class JsonFormatter(logging.Formatter):
             def _default_json_handler(obj):
                 '''Prints dates in ISO format'''
                 if isinstance(obj, datetime.datetime):
+                    if obj.year < 1900:
+                        # strftime do not work with date < 1900
+                        return obj.isoformat()
                     return obj.strftime(self.datefmt or '%Y-%m-%dT%H:%M')
                 elif isinstance(obj, datetime.date):
-                    return obj.strftime('%Y-%m-%d')
+                    return obj.isoformat()
                 elif isinstance(obj, datetime.time):
                     return obj.strftime('%H:%M')
                 return str(obj)
