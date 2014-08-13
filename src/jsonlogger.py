@@ -23,6 +23,7 @@ RESERVED_ATTRS = (
 
 RESERVED_ATTR_HASH = dict(zip(RESERVED_ATTRS, RESERVED_ATTRS))
 
+
 def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     """
     Merges extra attributes from LogRecord object into target dictionary
@@ -34,10 +35,11 @@ def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     for key, value in record.__dict__.items():
         #this allows to have numeric keys
         if (key not in reserved
-            and not (hasattr(key,"startswith") and key.startswith('_'))
-            ):
+            and not (hasattr(key, "startswith")
+                     and key.startswith('_'))):
             target[key] = value
     return target
+
 
 class JsonFormatter(logging.Formatter):
     """
@@ -51,17 +53,24 @@ class JsonFormatter(logging.Formatter):
         :param json_default: a function for encoding non-standard objects
             as outlined in http://docs.python.org/2/library/json.html
         :param json_encoder: optional custom encoder
+        :param prefix: an optional string prefix added at the beggining of
+            the formatted string
         """
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
-        super(JsonFormatter, self).__init__(*args, **kwargs)
+        self.prefix = kwargs.pop("prefix", "")
+        #super(JsonFormatter, self).__init__(*args, **kwargs)
+        logging.Formatter.__init__(self, *args, **kwargs)
         if not self.json_encoder and not self.json_default:
             def _default_json_handler(obj):
                 '''Prints dates in ISO format'''
                 if isinstance(obj, datetime.datetime):
+                    if obj.year < 1900:
+                        # strftime do not work with date < 1900
+                        return obj.isoformat()
                     return obj.strftime(self.datefmt or '%Y-%m-%dT%H:%M')
                 elif isinstance(obj, datetime.date):
-                    return obj.strftime('%Y-%m-%d')
+                    return obj.isoformat()
                 elif isinstance(obj, datetime.time):
                     return obj.strftime('%H:%M')
                 return str(obj)
@@ -98,6 +107,7 @@ class JsonFormatter(logging.Formatter):
         log_record.update(extras)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
 
-        return json.dumps(log_record,
-                          default=self.json_default,
-                          cls=self.json_encoder)
+        return "%s%s" % (self.prefix,
+                         json.dumps(log_record,
+                                    default=self.json_default,
+                                    cls=self.json_encoder))
