@@ -32,7 +32,7 @@ Json outputs are provided by the JsonFormatter logging formatter. You can add th
     logHandler.setFormatter(formatter)
     logger.addHandler(logHandler)
 ```
-The fmt parser can also be overiden if you want to use an alternate from the default.
+The fmt parser can also be overidden if you want to use an alternate from the default.
 
 ```python
     class CustomJsonFormatter(jsonlogger.JsonFormatter):
