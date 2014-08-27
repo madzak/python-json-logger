@@ -1,9 +1,3 @@
-import sys
-if sys.version_info < (2, 6):
-    print(sys.stderr, "{}: need Python 2.6 or later.".format(sys.argv[0]))
-    print(sys.stderror, "Your python is {}".format(sys.version))
-    sys.exit(1)
-
 from setuptools import setup
 
 setup(
@@ -25,7 +19,13 @@ setup(
         'Operating System :: OS Independent',
         'Programming Language :: Python',
         'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.1',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Topic :: System :: Logging',
     ]
 )
