@@ -53,7 +53,7 @@ class JsonFormatter(logging.Formatter):
         :param json_default: a function for encoding non-standard objects
             as outlined in http://docs.python.org/2/library/json.html
         :param json_encoder: optional custom encoder
-        :param prefix: an optional string prefix added at the beggining of
+        :param prefix: an optional string prefix added at the beginning of
             the formatted string
         """
         self.json_default = kwargs.pop("json_default", None)
