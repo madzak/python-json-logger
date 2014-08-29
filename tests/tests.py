@@ -141,6 +141,17 @@ class TestJsonLogger(unittest.TestCase):
         self.assertEqual(logJson.get("adate"), "very custom")
         self.assertEqual(logJson.get("normal"), "value")
 
+    def testJsonCustomLogicAddsField(self):
+        class CustomJsonFormatter(jsonlogger.JsonFormatter):
+
+            def process_log_record(self, log_record):
+                log_record["custom"] = "value"
+
+        self.logHandler.setFormatter(CustomJsonFormatter())
+        self.logger.info("message")
+        logJson = json.loads(self.buffer.getvalue())
+        self.assertEqual(logJson.get("custom"), "value")
+
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:
