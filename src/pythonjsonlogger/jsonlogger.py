@@ -119,7 +119,7 @@ class JsonFormatter(logging.Formatter):
             log_record = {}
 
         self.add_fields(log_record, record, message_dict)
-        self.process_log_record(log_record)
+        log_record = self.process_log_record(log_record)
 
         return "%s%s" % (self.prefix,
                          json.dumps(log_record,
