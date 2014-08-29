@@ -14,8 +14,8 @@ except ImportError:
     # Python 3 Support
     from io import StringIO
 
-sys.path.append('src')
-import jsonlogger
+sys.path.append('src/python-json-logger')
+from pythonjsonlogger import jsonlogger
 import datetime
 
 

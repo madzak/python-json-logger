@@ -4,18 +4,18 @@ if sys.version_info < (2, 6):
     print(sys.stderror, "Your Python is {}".format(sys.version))
     sys.exit(1)
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name = "python-json-logger",
-    version = "0.0.7",
+    version = "0.1.0",
     url = "http://github.com/madzak/python-json-logger",
     license = "BSD",
     description = "A python library adding a json log formatter",
     author = "Zakaria Zajac",
     author_email = "zak@madzak.com",
     package_dir = {'': 'src'},
-    packages = [''],
+    packages = find_packages("src", exclude="tests"),
     test_suite = "tests.tests",
     install_requires = ['setuptools'],
     classifiers = [

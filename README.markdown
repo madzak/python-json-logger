@@ -23,7 +23,7 @@ Json outputs are provided by the JsonFormatter logging formatter. You can add th
 
 ```python
     import logging
-    import jsonlogger
+    from pythonjsonlogger import jsonlogger
 
     logger = logging.getLogger()
 
