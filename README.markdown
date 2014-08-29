@@ -21,6 +21,8 @@ Usage
 
 Json outputs are provided by the JsonFormatter logging formatter. You can add the customer formatter like below:
 
+**Please note: version 0.1.0 has changed the import structure, please update to the following example for proper importing**
+
 ```python
     import logging
     from pythonjsonlogger import jsonlogger
