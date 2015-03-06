@@ -6,6 +6,9 @@ import logging
 import json
 import re
 import datetime
+import traceback
+
+from inspect import istraceback
 
 #Support order in python 2.7 and 3
 try:
@@ -73,6 +76,11 @@ class JsonFormatter(logging.Formatter):
                     return obj.isoformat()
                 elif isinstance(obj, datetime.time):
                     return obj.strftime('%H:%M')
+                elif istraceback(obj):
+                    tb = ''.join(traceback.format_tb(obj))
+                    return tb.strip()
+                elif isinstance(obj, Exception):
+                    return "Exception: %s" % str(obj)
                 return str(obj)
             self.json_default = _default_json_handler
         self._required_fields = self.parse()
