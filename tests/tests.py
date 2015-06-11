@@ -2,6 +2,7 @@ import unittest
 import logging
 import json
 import sys
+import traceback
 
 try:
     import xmlrunner
@@ -153,6 +154,22 @@ class TestJsonLogger(unittest.TestCase):
         logJson = json.loads(self.buffer.getvalue())
         self.assertEqual(logJson.get("custom"), "value")
 
+    def testExcInfo(self):
+        fr = jsonlogger.JsonFormatter()
+        self.logHandler.setFormatter(fr)
+        try:
+            raise Exception('test')
+        except Exception:
+
+            self.logger.exception("hello")
+
+            expected_value = traceback.format_exc()
+            # Formatter removes trailing new line
+            if expected_value.endswith('\n'):
+                expected_value = expected_value[:-1]
+
+        logJson = json.loads(self.buffer.getvalue())
+        self.assertEqual(logJson.get("exc_info"), expected_value)
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:

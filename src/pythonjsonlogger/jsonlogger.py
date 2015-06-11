@@ -121,6 +121,11 @@ class JsonFormatter(logging.Formatter):
         if "asctime" in self._required_fields:
             record.asctime = self.formatTime(record, self.datefmt)
 
+        # Display formatted exception, but allow overriding it in the
+        # user-supplied dict.
+        if record.exc_info and not message_dict.get('exc_info'):
+            message_dict['exc_info'] = self.formatException(record.exc_info)
+
         try:
             log_record = OrderedDict()
         except NameError:
