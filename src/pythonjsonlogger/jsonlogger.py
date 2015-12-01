@@ -109,6 +109,12 @@ class JsonFormatter(logging.Formatter):
         """
         return log_record
 
+    def jsonify_log_record(self, log_record):
+        """Returns a json string of the log record."""
+        return json.dumps(log_record,
+                          default=self.json_default,
+                          cls=self.json_encoder)
+
     def format(self, record):
         """Formats a log record and serializes to json"""
         message_dict = {}
@@ -134,7 +140,4 @@ class JsonFormatter(logging.Formatter):
         self.add_fields(log_record, record, message_dict)
         log_record = self.process_log_record(log_record)
 
-        return "%s%s" % (self.prefix,
-                         json.dumps(log_record,
-                                    default=self.json_default,
-                                    cls=self.json_encoder))
+        return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
