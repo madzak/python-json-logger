@@ -123,7 +123,7 @@ class TestJsonLogger(unittest.TestCase):
                "otherdatetimeagain": datetime.datetime(1900, 1, 1)}
         self.logger.info(msg)
         logJson = json.loads(self.buffer.getvalue())
-	self.assertEqual(logJson.get("adate"), "1999-12-31T23:59:00")
+        self.assertEqual(logJson.get("adate"), "1999-12-31T23:59:00")
         self.assertEqual(logJson.get("otherdate"), "1789-07-14")
         self.assertEqual(logJson.get("otherdatetime"), "1789-07-14T23:59:00")
         self.assertEqual(logJson.get("otherdatetimeagain"),
@@ -175,7 +175,7 @@ if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:
         if sys.argv[1] == 'xml':
             testSuite = unittest.TestLoader().loadTestsFromTestCase(
-                testJsonLogger)
+                TestJsonLogger)
             xmlrunner.XMLTestRunner(output='reports').run(testSuite)
     else:
         unittest.main()
