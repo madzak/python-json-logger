@@ -67,15 +67,8 @@ class JsonFormatter(logging.Formatter):
         if not self.json_encoder and not self.json_default:
             def _default_json_handler(obj):
                 '''Prints dates in ISO format'''
-                if isinstance(obj, datetime.datetime):
-                    if obj.year < 1900:
-                        # strftime do not work with date < 1900
-                        return obj.isoformat()
-                    return obj.strftime(self.datefmt or '%Y-%m-%dT%H:%M')
-                elif isinstance(obj, datetime.date):
+                if isinstance(obj, (datetime.date, datetime.time)):
                     return obj.isoformat()
-                elif isinstance(obj, datetime.time):
-                    return obj.strftime('%H:%M')
                 elif istraceback(obj):
                     tb = ''.join(traceback.format_tb(obj))
                     return tb.strip()
