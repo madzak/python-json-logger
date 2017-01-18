@@ -124,6 +124,8 @@ class JsonFormatter(logging.Formatter):
         # user-supplied dict.
         if record.exc_info and not message_dict.get('exc_info'):
             message_dict['exc_info'] = self.formatException(record.exc_info)
+        if not message_dict.get('exc_info') and record.exc_text:
+            message_dict['exc_info'] = record.exc_text
 
         try:
             log_record = OrderedDict()
