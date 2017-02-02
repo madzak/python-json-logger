@@ -147,7 +147,9 @@ class TestJsonLogger(unittest.TestCase):
 
             def process_log_record(self, log_record):
                 log_record["custom"] = "value"
-                return super(CustomJsonFormatter, self).process_log_record(log_record)
+                # Old Style "super" since Python 2.6's logging.Formatter is old
+                # style
+                return jsonlogger.JsonFormatter.process_log_record(self, log_record)
 
         self.logHandler.setFormatter(CustomJsonFormatter())
         self.logger.info("message")
