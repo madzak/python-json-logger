@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/madzak/python-json-logger.svg?branch=master)](https://travis-ci.org/madzak/python-json-logger)
+
 Overview
 =======
 This library is provided to allow standard python logging to output log data as json objects. With JSON we can make our logs more readable by machines and we can stop writing custom parsers for syslog type records.
