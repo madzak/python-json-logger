@@ -59,6 +59,37 @@ For custom handling of object serialization you can specify default json object 
     logger.info("classic message", extra={"special": "value", "run": 12})
 ```
 
+With a Config File
+------------------
+To use the module with a config file using the [`fileConfig` function](https://docs.python.org/3/library/logging.config.html#logging.config.fileConfig), use the class `pythonjsonlogger.jsonlogger.JsonFormatter`. Here is a sample config file.
+
+    [loggers]
+    keys = root,custom
+    
+    [logger_root]
+    handlers = 
+    
+    [logger_custom]
+    level = INFO
+    handlers = custom
+    qualname = custom
+    
+    [handlers]
+    keys = custom
+    
+    [handler_custom]
+    class = StreamHandler
+    level = INFO
+    formatter = json
+    args = (sys.stdout,)
+    
+    [formatters]
+    keys = json
+    
+    [formatter_json]
+    format = %(message)s
+    class = pythonjsonlogger.jsonlogger.JsonFormatter
+
 Example
 =======
 
