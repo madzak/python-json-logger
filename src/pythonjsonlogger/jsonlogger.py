@@ -56,11 +56,14 @@ class JsonFormatter(logging.Formatter):
         :param json_default: a function for encoding non-standard objects
             as outlined in http://docs.python.org/2/library/json.html
         :param json_encoder: optional custom encoder
+        :param json_serializer: a :meth:`json.dumps`-compatible callable
+            that will be used to serialize the log record.
         :param prefix: an optional string prefix added at the beginning of
             the formatted string
         """
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
+        self.json_serializer = kwargs.pop("json_serializer", json.dumps)
         self.prefix = kwargs.pop("prefix", "")
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
@@ -104,9 +107,9 @@ class JsonFormatter(logging.Formatter):
 
     def jsonify_log_record(self, log_record):
         """Returns a json string of the log record."""
-        return json.dumps(log_record,
-                          default=self.json_default,
-                          cls=self.json_encoder)
+        return self.json_serializer(log_record,
+                                    default=self.json_default,
+                                    cls=self.json_encoder)
 
     def format(self, record):
         """Formats a log record and serializes to json"""
