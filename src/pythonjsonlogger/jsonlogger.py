@@ -64,6 +64,7 @@ class JsonFormatter(logging.Formatter):
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
         self.json_serializer = kwargs.pop("json_serializer", json.dumps)
+        self.json_indent = kwargs.pop("json_indent", None)
         self.prefix = kwargs.pop("prefix", "")
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
@@ -109,7 +110,8 @@ class JsonFormatter(logging.Formatter):
         """Returns a json string of the log record."""
         return self.json_serializer(log_record,
                                     default=self.json_default,
-                                    cls=self.json_encoder)
+                                    cls=self.json_encoder,
+                                    indent=self.json_indent)
 
     def format(self, record):
         """Formats a log record and serializes to json"""
