@@ -12,7 +12,7 @@ Pip:
 
 Pypi:
 
-   https://pypi.python.org/pypi/python-json-logger 
+   https://pypi.python.org/pypi/python-json-logger
 
 Manual:
 
@@ -67,27 +67,27 @@ To use the module with a config file using the [`fileConfig` function](https://d
 
     [loggers]
     keys = root,custom
-    
+
     [logger_root]
-    handlers = 
-    
+    handlers =
+
     [logger_custom]
     level = INFO
     handlers = custom
     qualname = custom
-    
+
     [handlers]
     keys = custom
-    
+
     [handler_custom]
     class = StreamHandler
     level = INFO
     formatter = json
     args = (sys.stdout,)
-    
+
     [formatters]
     keys = json
-    
+
     [formatter_json]
     format = %(message)s
     class = pythonjsonlogger.jsonlogger.JsonFormatter
@@ -99,22 +99,22 @@ Sample JSON with a full formatter (basically the log message from the unit test)
 
 ```json
 {
-    "threadName": "MainThread", 
-    "name": "root", 
-    "thread": 140735202359648, 
-    "created": 1336281068.506248, 
-    "process": 41937, 
-    "processName": "MainProcess", 
-    "relativeCreated": 9.100914001464844, 
-    "module": "tests", 
-    "funcName": "testFormatKeys", 
-    "levelno": 20, 
-    "msecs": 506.24799728393555, 
-    "pathname": "tests/tests.py", 
-    "lineno": 60, 
-    "asctime": ["12-05-05 22:11:08,506248"], 
-    "message": "testing logging format", 
-    "filename": "tests.py", 
+    "threadName": "MainThread",
+    "name": "root",
+    "thread": 140735202359648,
+    "created": 1336281068.506248,
+    "process": 41937,
+    "processName": "MainProcess",
+    "relativeCreated": 9.100914001464844,
+    "module": "tests",
+    "funcName": "testFormatKeys",
+    "levelno": 20,
+    "msecs": 506.24799728393555,
+    "pathname": "tests/tests.py",
+    "lineno": 60,
+    "asctime": ["12-05-05 22:11:08,506248"],
+    "message": "testing logging format",
+    "filename": "tests.py",
     "levelname": "INFO",
     "special": "value",
     "run": 12
