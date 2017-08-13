@@ -86,7 +86,12 @@ class JsonFormatter(logging.Formatter):
         self._skip_fields.update(RESERVED_ATTR_HASH)
 
     def parse(self):
-        """Parses format string looking for substitutions"""
+        """
+        Parses format string looking for substitutions
+
+        This method is responsible for returning a list of fields (as strings)
+        to include in all log messages.
+        """
         standard_formatters = re.compile(r'\((.+?)\)', re.IGNORECASE)
         return standard_formatters.findall(self._fmt)
 
