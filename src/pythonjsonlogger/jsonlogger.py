@@ -58,6 +58,7 @@ class JsonFormatter(logging.Formatter):
         :param json_encoder: optional custom encoder
         :param json_serializer: a :meth:`json.dumps`-compatible callable
             that will be used to serialize the log record.
+        :param json_ensure_ascii: an argument of `json.dumps`.
         :param prefix: an optional string prefix added at the beginning of
             the formatted string
         """
@@ -65,6 +66,7 @@ class JsonFormatter(logging.Formatter):
         self.json_encoder = kwargs.pop("json_encoder", None)
         self.json_serializer = kwargs.pop("json_serializer", json.dumps)
         self.json_indent = kwargs.pop("json_indent", None)
+        self.json_ensure_ascii = kwargs.pop('json_ensure_ascii', True)
         self.prefix = kwargs.pop("prefix", "")
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
@@ -116,7 +118,8 @@ class JsonFormatter(logging.Formatter):
         return self.json_serializer(log_record,
                                     default=self.json_default,
                                     cls=self.json_encoder,
-                                    indent=self.json_indent)
+                                    indent=self.json_indent,
+                                    ensure_ascii=self.json_ensure_ascii)
 
     def format(self, record):
         """Formats a log record and serializes to json"""
