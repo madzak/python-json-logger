@@ -25,7 +25,7 @@ Usage
 
 ## Integrating with Python's logging framework
 
-Json outputs are provided by the JsonFormatter logging formatter. You can add the customer formatter like below:
+Json outputs are provided by the JsonFormatter logging formatter. You can add the custom formatter like below:
 
 **Please note: version 0.1.0 has changed the import structure, please update to the following example for proper importing**
 
