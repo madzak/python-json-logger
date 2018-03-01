@@ -5,7 +5,7 @@ to output log data as JSON formatted strings
 import logging
 import json
 import re
-import datetime
+from datetime import date, datetime, time
 import traceback
 
 from inspect import istraceback
@@ -44,6 +44,28 @@ def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
     return target
 
 
+class JsonEncoder(json.JSONEncoder):
+    """
+    A custom encoder extending the default JSONEncoder
+    """
+    def default(self, obj):
+        if isinstance(obj, (date, datetime, time)):
+            return self.format_datetime_obj(obj)
+
+        elif istraceback(obj):
+            return ''.join(traceback.format_tb(obj)).strip()
+
+        elif type(obj) == Exception \
+                or isinstance(obj, Exception) \
+                or type(obj) == type:
+            return str(obj)
+
+        return super(JsonEncoder, self).default(obj)
+
+    def format_datetime_obj(self, obj):
+        return obj.isoformat()
+
+
 class JsonFormatter(logging.Formatter):
     """
     A custom formatter to format logging records as json strings.
@@ -69,17 +91,8 @@ class JsonFormatter(logging.Formatter):
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
         if not self.json_encoder and not self.json_default:
-            def _default_json_handler(obj):
-                '''Prints dates in ISO format'''
-                if isinstance(obj, (datetime.date, datetime.time)):
-                    return obj.isoformat()
-                elif istraceback(obj):
-                    tb = ''.join(traceback.format_tb(obj))
-                    return tb.strip()
-                elif isinstance(obj, Exception):
-                    return "Exception: %s" % str(obj)
-                return str(obj)
-            self.json_default = _default_json_handler
+            self.json_encoder = JsonEncoder
+
         self._required_fields = self.parse()
         self._skip_fields = dict(zip(self._required_fields,
                                      self._required_fields))
