@@ -24,10 +24,8 @@ RESERVED_ATTRS = (
     'msecs', 'message', 'msg', 'name', 'pathname', 'process',
     'processName', 'relativeCreated', 'stack_info', 'thread', 'threadName')
 
-RESERVED_ATTR_HASH = dict(zip(RESERVED_ATTRS, RESERVED_ATTRS))
 
-
-def merge_record_extra(record, target, reserved=RESERVED_ATTR_HASH):
+def merge_record_extra(record, target, reserved):
     """
     Merges extra attributes from LogRecord object into target dictionary
 
@@ -80,14 +78,27 @@ class JsonFormatter(logging.Formatter):
         :param json_encoder: optional custom encoder
         :param json_serializer: a :meth:`json.dumps`-compatible callable
             that will be used to serialize the log record.
+        :param json_indent: an optional :meth:`json.dumps`-compatible numeric value
+            that will be used to customize the indent of the output json.
         :param prefix: an optional string prefix added at the beginning of
             the formatted string
+        :param reserved_attrs: an optional list of fields that will be skipped when
+            outputting json log record. Defaults to all log record attributes:
+            http://docs.python.org/library/logging.html#logrecord-attributes
+        :param timestamp: an optional string/boolean field to add a timestamp when
+            outputting the json log record. If string is passed, timestamp will be added
+            to log record using string as key. If True boolean is passed, timestamp key
+            will be "timestamp". Defaults to False/off.
         """
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
         self.json_serializer = kwargs.pop("json_serializer", json.dumps)
         self.json_indent = kwargs.pop("json_indent", None)
         self.prefix = kwargs.pop("prefix", "")
+        reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
+        self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
+        self.timestamp = kwargs.pop("timestamp", False)
+
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
         if not self.json_encoder and not self.json_default:
@@ -96,7 +107,7 @@ class JsonFormatter(logging.Formatter):
         self._required_fields = self.parse()
         self._skip_fields = dict(zip(self._required_fields,
                                      self._required_fields))
-        self._skip_fields.update(RESERVED_ATTR_HASH)
+        self._skip_fields.update(self.reserved_attrs)
 
     def parse(self):
         """
@@ -116,6 +127,10 @@ class JsonFormatter(logging.Formatter):
             log_record[field] = record.__dict__.get(field)
         log_record.update(message_dict)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
+
+        if self.timestamp:
+            key = self.timestamp if type(self.timestamp) == str else 'timestamp'
+            log_record[key] = datetime.utcnow()
 
     def process_log_record(self, log_record):
         """
