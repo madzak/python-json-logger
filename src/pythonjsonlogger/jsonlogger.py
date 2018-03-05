@@ -58,7 +58,15 @@ class JsonEncoder(json.JSONEncoder):
                 or type(obj) == type:
             return str(obj)
 
-        return super(JsonEncoder, self).default(obj)
+        try:
+            return super(JsonEncoder, self).default(obj)
+
+        except TypeError:
+            try:
+                return str(obj)
+
+            except Exception:
+                return None
 
     def format_datetime_obj(self, obj):
         return obj.isoformat()
