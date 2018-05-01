@@ -1,0 +1,19 @@
+Source: python3-jsonlogger
+Section: python
+Priority: optional
+Maintainer: Maximilian Wilhelm <max@sdn.clinic>
+Build-Depends: debhelper (>= 9), dh-python, dh-systemd,
+               python3-all,
+               python3-setuptools,
+               python3-pbr
+Standards-Version: 3.9.5
+Homepage: https://github.com/madzak/python-json-logger
+X-Python3-Version: >= 3.2
+
+Package: python3-jsonlogger
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends}
+Description: JSON library for Python logging framework
+ This library is provided to allow standard python logging to output log data
+ as json objects. With JSON we can make our logs more readable by machines
+ and we can stop writing custom parsers for syslog type records.
