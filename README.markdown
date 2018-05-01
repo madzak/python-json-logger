@@ -63,7 +63,7 @@ You can also add extra fields to your json output by specifying a dict in place 
 
 Contents of these dictionaries will be added at the root level of the entry and may override basic fields.
 
-You can also use the `add_fields` method to add to or generally normalize the set of default set of fields, it is be called for every log event. For example, to unify default fields with those provided by [structlog](http://www.structlog.org/) you could do something like this:
+You can also use the `add_fields` method to add to or generally normalize the set of default set of fields, it is called for every log event. For example, to unify default fields with those provided by [structlog](http://www.structlog.org/) you could do something like this:
 
 ```python
 class CustomJsonFormatter(jsonlogger.JsonFormatter):
