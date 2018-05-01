@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import unittest
 import logging
 import json
@@ -172,6 +173,22 @@ class TestJsonLogger(unittest.TestCase):
 
         logJson = json.loads(self.buffer.getvalue())
         self.assertEqual(logJson.get("exc_info"), expected_value)
+
+    def testEnsureAsciiTrue(self):
+        fr = jsonlogger.JsonFormatter()
+        self.logHandler.setFormatter(fr)
+        self.logger.info('Привет')
+        msg = self.buffer.getvalue().split('"message": "', 1)[1].split('"', 1)[0]
+        self.assertEqual(msg, r"\u041f\u0440\u0438\u0432\u0435\u0442")
+
+    def testEnsureAsciiFalse(self):
+        fr = jsonlogger.JsonFormatter(json_ensure_ascii=False)
+        self.logHandler.setFormatter(fr)
+        self.logger.info('Привет')
+        msg = self.buffer.getvalue().split('"message": "', 1)[1].split('"', 1)[0]
+        self.assertEqual(msg, "Привет")
+
+
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:

@@ -90,6 +90,8 @@ class JsonFormatter(logging.Formatter):
             that will be used to customize the indent of the output json.
         :param prefix: an optional string prefix added at the beginning of
             the formatted string
+        :param json_indent: indent parameter for json.dumps
+        :param json_ensure_ascii: ensure_ascii parameter for json.dumps
         :param reserved_attrs: an optional list of fields that will be skipped when
             outputting json log record. Defaults to all log record attributes:
             http://docs.python.org/library/logging.html#logrecord-attributes
@@ -102,6 +104,7 @@ class JsonFormatter(logging.Formatter):
         self.json_encoder = kwargs.pop("json_encoder", None)
         self.json_serializer = kwargs.pop("json_serializer", json.dumps)
         self.json_indent = kwargs.pop("json_indent", None)
+        self.json_ensure_ascii = kwargs.pop("json_ensure_ascii", True)
         self.prefix = kwargs.pop("prefix", "")
         reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
@@ -152,7 +155,8 @@ class JsonFormatter(logging.Formatter):
         return self.json_serializer(log_record,
                                     default=self.json_default,
                                     cls=self.json_encoder,
-                                    indent=self.json_indent)
+                                    indent=self.json_indent,
+                                    ensure_ascii=self.json_ensure_ascii)
 
     def format(self, record):
         """Formats a log record and serializes to json"""
