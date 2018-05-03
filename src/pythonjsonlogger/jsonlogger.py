@@ -99,8 +99,8 @@ class JsonFormatter(logging.Formatter):
             outputting the json log record. If string is passed, timestamp will be added
             to log record using string as key. If True boolean is passed, timestamp key
             will be "timestamp". Defaults to False/off.
-        :param stringify: an optional boolean field. When True, the output record 
-            from the format function will be stringified. If False, then the 
+        :param stringify: an optional boolean field. When True (default), the output 
+            record from the format function will be stringified. If False, then the 
             dict instance is returned. `prefix` is ignored when False.
         """
         self.json_default = kwargs.pop("json_default", None)
