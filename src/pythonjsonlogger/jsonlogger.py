@@ -99,6 +99,9 @@ class JsonFormatter(logging.Formatter):
             outputting the json log record. If string is passed, timestamp will be added
             to log record using string as key. If True boolean is passed, timestamp key
             will be "timestamp". Defaults to False/off.
+        :param stringify: an optional boolean field. When True, the output record 
+            from the format function will be stringified. If False, then the 
+            dict instance is returned. `prefix` is ignored when False.
         """
         self.json_default = kwargs.pop("json_default", None)
         self.json_encoder = kwargs.pop("json_encoder", None)
@@ -109,6 +112,7 @@ class JsonFormatter(logging.Formatter):
         reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
         self.timestamp = kwargs.pop("timestamp", False)
+        self.stringify = kwargs.pop("stringify", True)
 
         #super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
@@ -157,6 +161,13 @@ class JsonFormatter(logging.Formatter):
                                     cls=self.json_encoder,
                                     indent=self.json_indent,
                                     ensure_ascii=self.json_ensure_ascii)
+    
+    def _format_instance(self, log_record):
+        """Either dumps to JSON string or returns dict instance"""
+        if not self.stringify:
+            return log_record
+        else:
+            return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
 
     def format(self, record):
         """Formats a log record and serializes to json"""
@@ -185,4 +196,4 @@ class JsonFormatter(logging.Formatter):
         self.add_fields(log_record, record, message_dict)
         log_record = self.process_log_record(log_record)
 
-        return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
+        return self._format_instance(log_record)
