@@ -133,7 +133,7 @@ class JsonFormatter(logging.Formatter):
         if not isinstance(fn_as_str, str):
             return fn_as_str
 
-        *path, function = fn_as_str.split('.')
+        path, _, function = fn_as_str.rpartition('.')
         module = importlib.import_module('.'.join(path))
         return getattr(module, function)
 
