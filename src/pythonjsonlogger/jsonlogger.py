@@ -134,7 +134,7 @@ class JsonFormatter(logging.Formatter):
             return fn_as_str
 
         path, _, function = fn_as_str.rpartition('.')
-        module = importlib.import_module('.'.join(path))
+        module = importlib.import_module(path)
         return getattr(module, function)
 
     def parse(self):
