@@ -7,10 +7,11 @@ import json
 import re
 from datetime import date, datetime, time
 import traceback
+import importlib
 
 from inspect import istraceback
 
-#Support order in python 2.7 and 3
+# Support order in python 2.7 and 3
 try:
     from collections import OrderedDict
 except ImportError:
@@ -34,7 +35,7 @@ def merge_record_extra(record, target, reserved):
     :param reserved: dict or list with reserved keys to skip
     """
     for key, value in record.__dict__.items():
-        #this allows to have numeric keys
+        # this allows to have numeric keys
         if (key not in reserved
             and not (hasattr(key, "startswith")
                      and key.startswith('_'))):
@@ -46,6 +47,7 @@ class JsonEncoder(json.JSONEncoder):
     """
     A custom encoder extending the default JSONEncoder
     """
+
     def default(self, obj):
         if isinstance(obj, (date, datetime, time)):
             return self.format_datetime_obj(obj)
@@ -100,9 +102,9 @@ class JsonFormatter(logging.Formatter):
             to log record using string as key. If True boolean is passed, timestamp key
             will be "timestamp". Defaults to False/off.
         """
-        self.json_default = kwargs.pop("json_default", None)
-        self.json_encoder = kwargs.pop("json_encoder", None)
-        self.json_serializer = kwargs.pop("json_serializer", json.dumps)
+        self.json_default = self._str_to_fn(kwargs.pop("json_default", None))
+        self.json_encoder = self._str_to_fn(kwargs.pop("json_encoder", None))
+        self.json_serializer = self._str_to_fn(kwargs.pop("json_serializer", json.dumps))
         self.json_indent = kwargs.pop("json_indent", None)
         self.json_ensure_ascii = kwargs.pop("json_ensure_ascii", True)
         self.prefix = kwargs.pop("prefix", "")
@@ -110,7 +112,7 @@ class JsonFormatter(logging.Formatter):
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
         self.timestamp = kwargs.pop("timestamp", False)
 
-        #super(JsonFormatter, self).__init__(*args, **kwargs)
+        # super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
         if not self.json_encoder and not self.json_default:
             self.json_encoder = JsonEncoder
@@ -119,6 +121,21 @@ class JsonFormatter(logging.Formatter):
         self._skip_fields = dict(zip(self._required_fields,
                                      self._required_fields))
         self._skip_fields.update(self.reserved_attrs)
+
+    def _str_to_fn(self, fn_as_str):
+        """
+        If the argument is not a string, return whatever was passed in.
+        Parses a string such as package.module.function, imports the module
+        and returns the function.
+
+        :param fn_as_str: The string to parse. If not a string, return it.
+        """
+        if not isinstance(fn_as_str, str):
+            return fn_as_str
+
+        path, _, function = fn_as_str.rpartition('.')
+        module = importlib.import_module(path)
+        return getattr(module, function)
 
     def parse(self):
         """
