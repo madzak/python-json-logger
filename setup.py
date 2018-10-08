@@ -17,7 +17,6 @@ setup(
     package_dir = {'': 'src'},
     packages = find_packages("src", exclude="tests"),
     test_suite = "tests.tests",
-    install_requires = ['setuptools'],
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
