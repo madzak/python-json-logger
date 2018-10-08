@@ -1,10 +1,3 @@
-import sys
-if sys.version_info < (2, 7):
-    print(sys.stderr, "{}: need Python 2.7 or later.".format(sys.argv[0]))
-    print(sys.stderr, "Your Python is {}".format(sys.version))
-    sys.exit(1)
-
-
 from setuptools import setup, find_packages
 
 
@@ -18,6 +11,8 @@ setup(
     author_email="zak@madzak.com",
     package_dir={'': 'src'},
     packages=find_packages("src", exclude="tests"),
+    # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
+    python_requires='>=2.7',
     test_suite="tests.tests",
     classifiers=[
         'Development Status :: 3 - Alpha',
