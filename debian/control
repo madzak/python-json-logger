@@ -1,4 +1,4 @@
-Source: python3-jsonlogger
+Source: python3-json-logger
 Section: python
 Priority: optional
 Maintainer: Maximilian Wilhelm <max@sdn.clinic>
@@ -10,7 +10,7 @@ Standards-Version: 3.9.5
 Homepage: https://github.com/madzak/python-json-logger
 X-Python3-Version: >= 3.2
 
-Package: python3-jsonlogger
+Package: python3-json-logger
 Architecture: all
 Depends: ${python3:Depends}, ${misc:Depends}
 Description: JSON library for Python logging framework
