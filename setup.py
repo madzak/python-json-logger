@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="python-json-logger",
-    version="0.1.10",
+    version="0.1.11",
     url="http://github.com/madzak/python-json-logger",
     license="BSD",
     description="A python library adding a json log formatter",
@@ -26,6 +26,7 @@ setup(
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         'Topic :: System :: Logging',
     ]
 )

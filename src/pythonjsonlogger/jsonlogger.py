@@ -11,11 +11,7 @@ import importlib
 
 from inspect import istraceback
 
-# Support order in python 2.7 and 3
-try:
-    from collections import OrderedDict
-except ImportError:
-    pass
+from collections import OrderedDict
 
 # skip natural LogRecord attributes
 # http://docs.python.org/library/logging.html#logrecord-attributes
