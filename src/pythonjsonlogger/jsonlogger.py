@@ -77,7 +77,7 @@ class JsonEncoder(json.JSONEncoder):
 class JsonFormatter(logging.Formatter):
     """
     A custom formatter to format logging records as json strings.
-    extra values will be formatted as str() if nor supported by
+    Extra values will be formatted as str() if not supported by
     json default encoder
     """
 
@@ -193,6 +193,10 @@ class JsonFormatter(logging.Formatter):
             message_dict['exc_info'] = self.formatException(record.exc_info)
         if not message_dict.get('exc_info') and record.exc_text:
             message_dict['exc_info'] = record.exc_text
+        # Display formatted record of stack frames
+        # default format is a string returned from :func:`traceback.print_stack`
+        if record.stack_info and not message_dict.get('stack_info'):
+            message_dict['stack_info'] = self.formatStack(record.stack_info)
 
         try:
             log_record = OrderedDict()
