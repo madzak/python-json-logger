@@ -191,8 +191,12 @@ class JsonFormatter(logging.Formatter):
             message_dict['exc_info'] = record.exc_text
         # Display formatted record of stack frames
         # default format is a string returned from :func:`traceback.print_stack`
-        if record.stack_info and not message_dict.get('stack_info'):
-            message_dict['stack_info'] = self.formatStack(record.stack_info)
+        try:
+            if record.stack_info and not message_dict.get('stack_info'):
+                message_dict['stack_info'] = self.formatStack(record.stack_info)
+        except AttributeError:
+            # Python2.7 doesn't have stack_info.
+            pass
 
         try:
             log_record = OrderedDict()
