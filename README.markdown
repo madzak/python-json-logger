@@ -95,7 +95,7 @@ def json_translate(obj):
         return {"special": obj.special}
 
 formatter = jsonlogger.JsonFormatter(json_default=json_translate,
-                                     json_encoder=json.JSONEncoder())
+                                     json_encoder=json.JSONEncoder)
 logHandler.setFormatter(formatter)
 
 logger.info({"special": "value", "run": 12})
