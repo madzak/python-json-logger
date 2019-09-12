@@ -163,3 +163,8 @@ Sample JSON with a full formatter (basically the log message from the unit test)
     "run": 12
 }
 ```
+
+External Examples
+=================
+
+- [Wesley Tanaka - Structured log files in Python using python-json-logger](https://wtanaka.com/node/8201)
