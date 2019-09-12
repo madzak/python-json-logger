@@ -12,7 +12,7 @@ setup(
     package_dir={'': 'src'},
     packages=find_packages("src", exclude="tests"),
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires='>=2.7',
+    python_requires='>=3.4',
     test_suite="tests.tests",
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -20,8 +20,6 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
