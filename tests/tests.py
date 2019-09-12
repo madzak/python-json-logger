@@ -4,6 +4,7 @@ import logging
 import json
 import sys
 import traceback
+import random
 
 try:
     import xmlrunner
@@ -23,7 +24,7 @@ import datetime
 
 class TestJsonLogger(unittest.TestCase):
     def setUp(self):
-        self.logger = logging.getLogger('logging-test')
+        self.logger = logging.getLogger("logging-test-{}".format(random.randint(1, 101)))
         self.logger.setLevel(logging.DEBUG)
         self.buffer = StringIO()
 
@@ -188,7 +189,26 @@ class TestJsonLogger(unittest.TestCase):
         msg = self.buffer.getvalue().split('"message": "', 1)[1].split('"', 1)[0]
         self.assertEqual(msg, "Привет")
 
+    def testCustomObjectSerialization(self):
+        def encode_complex(z):
+            if isinstance(z, complex):
+                return (z.real, z.imag)
+            else:
+                type_name = z.__class__.__name__
+                raise TypeError(f"Object of type '{type_name}' is no JSON serializable")
 
+        formatter = jsonlogger.JsonFormatter(json_default=encode_complex,
+                                             json_encoder=json.JSONEncoder)
+        self.logHandler.setFormatter(formatter)
+
+        value = {
+            "special": complex(3, 8),
+            "run": 12
+        }
+
+        self.logger.info(" message", extra=value)
+        msg = self.buffer.getvalue()
+        self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0], \"run\": 12}\n")
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:
