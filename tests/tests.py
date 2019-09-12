@@ -203,12 +203,11 @@ class TestJsonLogger(unittest.TestCase):
 
         value = {
             "special": complex(3, 8),
-            "run": 12
         }
 
         self.logger.info(" message", extra=value)
         msg = self.buffer.getvalue()
-        self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0], \"run\": 12}\n")
+        self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0]}\n")
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:
