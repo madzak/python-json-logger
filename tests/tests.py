@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+import unittest.mock
 import logging
 import json
 import sys
@@ -7,12 +8,12 @@ import traceback
 import random
 
 try:
-    import xmlrunner
+    import xmlrunner  # noqa
 except ImportError:
     pass
 
 try:
-    from StringIO import StringIO
+    from StringIO import StringIO  # noqa
 except ImportError:
     # Python 3 Support
     from io import StringIO
@@ -130,6 +131,17 @@ class TestJsonLogger(unittest.TestCase):
         self.assertEqual(logJson.get("otherdatetime"), "1789-07-14T23:59:00")
         self.assertEqual(logJson.get("otherdatetimeagain"),
                          "1900-01-01T00:00:00")
+
+    @unittest.mock.patch('time.time', return_value=1500000000.0)
+    def testJsonDefaultEncoderWithTimestamp(self, time_mock):
+        fr = jsonlogger.JsonFormatter(timestamp=True)
+        self.logHandler.setFormatter(fr)
+
+        self.logger.info("Hello")
+
+        self.assertTrue(time_mock.called)
+        logJson = json.loads(self.buffer.getvalue())
+        self.assertEqual(logJson.get("timestamp"), "2017-07-14T02:40:00+00:00")
 
     def testJsonCustomDefault(self):
         def custom(o):
