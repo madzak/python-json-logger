@@ -5,7 +5,7 @@ to output log data as JSON formatted strings
 import logging
 import json
 import re
-from datetime import date, datetime, time
+from datetime import date, datetime, time, timezone
 import traceback
 import importlib
 
@@ -154,7 +154,7 @@ class JsonFormatter(logging.Formatter):
 
         if self.timestamp:
             key = self.timestamp if type(self.timestamp) == str else 'timestamp'
-            log_record[key] = datetime.utcnow()
+            log_record[key] = datetime.fromtimestamp(record.created, tz=timezone.utc)
 
     def process_log_record(self, log_record):
         """
