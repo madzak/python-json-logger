@@ -8,7 +8,7 @@ This library is provided to allow standard python logging to output log data as 
 
 News
 =======
-* Hi, I see this package is quiet alive and I am sorry for ignoring it so long. I will be stepping up my maintenance of this package so please allow me a week to get things back in order (and most likely a new minor version) and i'll post and update here once I am caught up.
+Hi, I see this package is quiet alive and I am sorry for ignoring it so long. I will be stepping up my maintenance of this package so please allow me a week to get things back in order (and most likely a new minor version) and i'll post and update here once I am caught up.
 
 Installing
 ==========
