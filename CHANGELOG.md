@@ -4,9 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.0] - 2020-09-26
 ### Added
 - New Changelog
+- Added timezone support to timestamps - @lalten
+- Refactored log record to function - @georgysavva
+- Add python 3.8 support - @tommilligan
 ### Removed
 - Support for Python 2.7
 - Debian directory
@@ -19,5 +22,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 
-[Unreleased]: https://github.com/madzak/python-json-logger/compare/v0.1.11...HEAD
+[2.0]: https://github.com/madzak/python-json-logger/compare/v0.1.11...HEAD
 [0.1.11]: https://github.com/madzak/python-json-logger/compare/v0.1.10...v0.1.11
