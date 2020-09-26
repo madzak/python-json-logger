@@ -6,7 +6,9 @@ Overview
 =======
 This library is provided to allow standard python logging to output log data as json objects. With JSON we can make our logs more readable by machines and we can stop writing custom parsers for syslog type records.
 
-**NOTICE: Python2.7 is only supported up to v0.1.11. The next release, v2.0, will support Python3 only.**
+News
+=======
+* Hi, I see this package is quiet alive and I am sorry for ignoring it so long. I will be stepping up my maintenance of this package so please allow me a week to get things back in order (and most likely a new minor version) and i'll post and update here once I am caught up.
 
 Installing
 ==========
