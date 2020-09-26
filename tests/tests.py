@@ -63,7 +63,7 @@ class TestJsonLogger(unittest.TestCase):
             'threadName'
         ]
 
-        log_format = lambda x: ['%({0:s})'.format(i) for i in x]
+        log_format = lambda x: ['%({0:s})s'.format(i) for i in x]
         custom_format = ' '.join(log_format(supported_keys))
 
         fr = jsonlogger.JsonFormatter(custom_format)

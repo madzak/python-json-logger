@@ -60,7 +60,7 @@ formatter = CustomJsonFormatter('one;two')
 
 # is equivalent to:
 
-formatter = jsonlogger.JsonFormatter('(one) (two)')
+formatter = jsonlogger.JsonFormatter('%(one)s %(two)s')
 ```
 
 You can also add extra fields to your json output by specifying a dict in place of message, as well as by specifying an `extra={}` argument.
@@ -82,7 +82,7 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
         else:
             log_record['level'] = record.levelname
 
-formatter = CustomJsonFormatter('(timestamp) (level) (name) (message)')
+formatter = CustomJsonFormatter('%(timestamp)s %(level)s %(name)s %(message)s')
 ```
 
 Items added to the log record will be included in *every* log message, no matter what the format requires.
