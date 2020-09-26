@@ -171,6 +171,10 @@ class JsonFormatter(logging.Formatter):
                                     indent=self.json_indent,
                                     ensure_ascii=self.json_ensure_ascii)
 
+    def serialize_log_record(self, log_record):
+        """Returns the final representation of the log record."""
+        return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
+
     def format(self, record):
         """Formats a log record and serializes to json"""
         message_dict = {}
@@ -206,4 +210,4 @@ class JsonFormatter(logging.Formatter):
         self.add_fields(log_record, record, message_dict)
         log_record = self.process_log_record(log_record)
 
-        return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
+        return self.serialize_log_record(log_record)
