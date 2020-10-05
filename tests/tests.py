@@ -42,6 +42,16 @@ class TestJsonLogger(unittest.TestCase):
 
         self.assertEqual(logJson["message"], msg)
 
+    def testRenameBaseField(self):
+        fr = jsonlogger.JsonFormatter(rename_fields={'message': '@message'})
+        self.logHandler.setFormatter(fr)
+
+        msg = "testing logging format"
+        self.logger.info(msg)
+        logJson = json.loads(self.buffer.getvalue())
+
+        self.assertEqual(logJson["@message"], msg)
+
     def testFormatKeys(self):
         supported_keys = [
             'asctime',

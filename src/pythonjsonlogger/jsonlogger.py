@@ -88,6 +88,8 @@ class JsonFormatter(logging.Formatter):
             that will be used to customize the indent of the output json.
         :param prefix: an optional string prefix added at the beginning of
             the formatted string
+        :param rename_fields: an optional dict, used to rename field names in the output.
+            Rename message to @message: {'message': '@message'}
         :param json_indent: indent parameter for json.dumps
         :param json_ensure_ascii: ensure_ascii parameter for json.dumps
         :param reserved_attrs: an optional list of fields that will be skipped when
@@ -104,6 +106,7 @@ class JsonFormatter(logging.Formatter):
         self.json_indent = kwargs.pop("json_indent", None)
         self.json_ensure_ascii = kwargs.pop("json_ensure_ascii", True)
         self.prefix = kwargs.pop("prefix", "")
+        self.rename_fields = kwargs.pop("rename_fields", {})
         reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
         self.timestamp = kwargs.pop("timestamp", False)
@@ -148,7 +151,10 @@ class JsonFormatter(logging.Formatter):
         Override this method to implement custom logic for adding fields.
         """
         for field in self._required_fields:
-            log_record[field] = record.__dict__.get(field)
+            if field in self.rename_fields:
+                log_record[self.rename_fields[field]] = record.__dict__.get(field)
+            else:
+                log_record[field] = record.__dict__.get(field)
         log_record.update(message_dict)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
 
