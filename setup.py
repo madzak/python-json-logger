@@ -1,5 +1,10 @@
 from setuptools import setup, find_packages
 
+# read the contents of your README file
+from os import path
+this_directory = path.abspath(path.dirname(__file__))
+with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
+    long_description = f.read()
 
 setup(
     name="python-json-logger",
@@ -7,6 +12,8 @@ setup(
     url="http://github.com/madzak/python-json-logger",
     license="BSD",
     description="A python library adding a json log formatter",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author="Zakaria Zajac",
     author_email="zak@madzak.com",
     package_dir={'': 'src'},
