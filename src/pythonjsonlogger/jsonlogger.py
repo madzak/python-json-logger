@@ -179,7 +179,7 @@ class JsonFormatter(logging.Formatter):
 
     def serialize_log_record(self, log_record):
         """Returns the final representation of the log record."""
-        return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
+        return "%s%s" % (self.prefix, self.jsonify_log_record(log_record).replace('\\n', '\n'))
 
     def format(self, record):
         """Formats a log record and serializes to json"""
