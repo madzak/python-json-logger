@@ -90,6 +90,7 @@ class JsonFormatter(logging.Formatter):
             the formatted string
         :param rename_fields: an optional dict, used to rename field names in the output.
             Rename message to @message: {'message': '@message'}
+        :param static_fields: an optional dict, used to add fields with static values to all logs
         :param json_indent: indent parameter for json.dumps
         :param json_ensure_ascii: ensure_ascii parameter for json.dumps
         :param reserved_attrs: an optional list of fields that will be skipped when
@@ -107,6 +108,7 @@ class JsonFormatter(logging.Formatter):
         self.json_ensure_ascii = kwargs.pop("json_ensure_ascii", True)
         self.prefix = kwargs.pop("prefix", "")
         self.rename_fields = kwargs.pop("rename_fields", {})
+        self.static_fields = kwargs.pop("static_fields", {})
         reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
         self.timestamp = kwargs.pop("timestamp", False)
@@ -155,6 +157,7 @@ class JsonFormatter(logging.Formatter):
                 log_record[self.rename_fields[field]] = record.__dict__.get(field)
             else:
                 log_record[field] = record.__dict__.get(field)
+        log_record.update(self.static_fields)
         log_record.update(message_dict)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
 
