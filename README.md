@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/madzak/python-json-logger.svg?branch=master)](https://travis-ci.org/madzak/python-json-logger)
+[![Build Status](https://github.com/madzak/python-json-logger/actions/workflows/build.yml/badge.svg)
 [![License](https://img.shields.io/pypi/l/python-json-logger.svg)](https://pypi.python.org/pypi/python-json-logger/)
 [![Version](https://img.shields.io/pypi/v/python-json-logger.svg)](https://pypi.python.org/pypi/python-json-logger/)
 
