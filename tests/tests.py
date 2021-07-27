@@ -52,6 +52,19 @@ class TestJsonLogger(unittest.TestCase):
 
         self.assertEqual(logJson["@message"], msg)
 
+    def testAddStaticFields(self):
+        fr = jsonlogger.JsonFormatter(static_fields={'log_stream': 'kafka'})
+
+        self.logHandler.setFormatter(fr)
+
+        msg = "testing static fields"
+        self.logger.info(msg)
+        logJson = json.loads(self.buffer.getvalue())
+
+        self.assertEqual(logJson["log_stream"], "kafka")
+        self.assertEqual(logJson["message"], msg)
+
+
     def testFormatKeys(self):
         supported_keys = [
             'asctime',
