@@ -23,7 +23,7 @@ setup(
     python_requires='>=3.5',
     test_suite="tests.tests",
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 6 - Mature',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
