@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/madzak/python-json-logger/actions/workflows/build.yml/badge.svg)
+![Build Status](https://github.com/madzak/python-json-logger/actions/workflows/build.yml/badge.svg)
 [![License](https://img.shields.io/pypi/l/python-json-logger.svg)](https://pypi.python.org/pypi/python-json-logger/)
 [![Version](https://img.shields.io/pypi/v/python-json-logger.svg)](https://pypi.python.org/pypi/python-json-logger/)
 
@@ -8,7 +8,7 @@ This library is provided to allow standard python logging to output log data as 
 
 News
 =======
-Hi, I see this package is quiet alive and I am sorry for ignoring it so long. I will be stepping up my maintenance of this package so please allow me a week to get things back in order (and most likely a new minor version) and i'll post and update here once I am caught up.
+Hi, I see this package is quiet alive and I am sorry for ignoring it so long. I will be stepping up my maintenance of this package so please allow me a week to get things back in order (and most likely a new minor version) and I'll post and update here once I am caught up.
 
 Installing
 ==========
