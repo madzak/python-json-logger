@@ -1,12 +1,13 @@
 language: python
 dist: xenial
 python:
-  - "3.4"
+  - "pypy3"
   - "3.5"
   - "3.6"
   - "3.7"
   - "3.8"
   - "3.9"
+  - "3.10"
 install: pip install tox-travis
 script: tox
 deploy:
