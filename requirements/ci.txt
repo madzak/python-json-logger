@@ -1,4 +1,6 @@
 coverage
 pylint
 unittest-xml-reporting
+wheel
+setuptools
 tox
