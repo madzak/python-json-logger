@@ -144,9 +144,18 @@ class JsonFormatter(logging.Formatter):
 
         This method is responsible for returning a list of fields (as strings)
         to include in all log messages.
-        """
-        standard_formatters = re.compile(r'\((.+?)\)', re.IGNORECASE)
-        return standard_formatters.findall(self._fmt)
+        """        
+        if isinstance(self._style, logging.StringTemplateStyle):
+            formatter_style_pattern = re.compile(r'\$\{(.+?)\}', re.IGNORECASE)
+        elif isinstance(self._style, logging.StrFormatStyle):
+            formatter_style_pattern = re.compile(r'\{(.+?)\}', re.IGNORECASE)
+        # PercentStyle is parent class of StringTemplateStyle and StrFormatStyle so
+        # it needs to be checked last.
+        elif isinstance(self._style, logging.PercentStyle):
+            formatter_style_pattern = re.compile(r'%\((.+?)\)s', re.IGNORECASE)
+        else:
+            raise ValueError('Invalid format: %s' % self._fmt)
+        return formatter_style_pattern.findall(self._fmt)
 
     def add_fields(self, log_record, record, message_dict):
         """
