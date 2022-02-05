@@ -157,7 +157,11 @@ class JsonFormatter(logging.Formatter):
             formatter_style_pattern = re.compile(r'%\((.+?)\)s', re.IGNORECASE)
         else:
             raise ValueError('Invalid format: %s' % self._fmt)
-        return formatter_style_pattern.findall(self._fmt)
+
+        if self._fmt:
+            return formatter_style_pattern.findall(self._fmt)
+        else:
+            return []
 
     def add_fields(self, log_record, record, message_dict):
         """
