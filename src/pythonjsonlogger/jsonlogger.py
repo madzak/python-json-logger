@@ -9,7 +9,7 @@ from datetime import date, datetime, time, timezone
 import traceback
 import importlib
 
-from typing import Dict, Union, List, Tuple
+from typing import Any, Dict, Union, List, Tuple
 
 from inspect import istraceback
 
@@ -163,7 +163,7 @@ class JsonFormatter(logging.Formatter):
         else:
             return []
 
-    def add_fields(self, log_record, record, message_dict):
+    def add_fields(self, log_record: Dict[str, Any], record: logging.LogRecord, message_dict: Dict[str, Any]) -> None:
         """
         Override this method to implement custom logic for adding fields.
         """
@@ -195,15 +195,17 @@ class JsonFormatter(logging.Formatter):
                                     indent=self.json_indent,
                                     ensure_ascii=self.json_ensure_ascii)
 
-    def serialize_log_record(self, log_record):
+    def serialize_log_record(self, log_record: Dict[str, Any]) -> str:
         """Returns the final representation of the log record."""
         return "%s%s" % (self.prefix, self.jsonify_log_record(log_record))
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord) -> str:
         """Formats a log record and serializes to json"""
-        message_dict = {}
-        if isinstance(record.msg, dict):
-            message_dict = record.msg
+        message_dict: Dict[str, Any] = {}
+        # FIXME: logging.LogRecord.msg and logging.LogRecord.message in typeshed
+        #        are always type of str. We shouldn't need to override that.
+        if isinstance(record.msg, dict):  # type: ignore
+            message_dict = record.msg  # type: ignore
             record.message = None
         else:
             record.message = record.getMessage()
@@ -226,7 +228,7 @@ class JsonFormatter(logging.Formatter):
             # Python2.7 doesn't have stack_info.
             pass
 
-        log_record: Dict
+        log_record: Dict[str, Any]
         try:
             log_record = OrderedDict()
         except NameError:
