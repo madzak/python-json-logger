@@ -9,20 +9,22 @@ from datetime import date, datetime, time, timezone
 import traceback
 import importlib
 
+from typing import Dict, Union, List, Tuple
+
 from inspect import istraceback
 
 from collections import OrderedDict
 
 # skip natural LogRecord attributes
 # http://docs.python.org/library/logging.html#logrecord-attributes
-RESERVED_ATTRS = (
+RESERVED_ATTRS: Tuple[str, ...] = (
     'args', 'asctime', 'created', 'exc_info', 'exc_text', 'filename',
     'funcName', 'levelname', 'levelno', 'lineno', 'module',
     'msecs', 'message', 'msg', 'name', 'pathname', 'process',
     'processName', 'relativeCreated', 'stack_info', 'thread', 'threadName')
 
 
-def merge_record_extra(record, target, reserved):
+def merge_record_extra(record: logging.LogRecord, target: Dict, reserved: Union[Dict, List]) -> Dict:
     """
     Merges extra attributes from LogRecord object into target dictionary
 
@@ -138,7 +140,7 @@ class JsonFormatter(logging.Formatter):
         module = importlib.import_module(path)
         return getattr(module, function)
 
-    def parse(self):
+    def parse(self) -> List[str]:
         """
         Parses format string looking for substitutions
 
@@ -155,7 +157,11 @@ class JsonFormatter(logging.Formatter):
             formatter_style_pattern = re.compile(r'%\((.+?)\)s', re.IGNORECASE)
         else:
             raise ValueError('Invalid format: %s' % self._fmt)
-        return formatter_style_pattern.findall(self._fmt)
+
+        if self._fmt:
+            return formatter_style_pattern.findall(self._fmt)
+        else:
+            return []
 
     def add_fields(self, log_record, record, message_dict):
         """
@@ -220,6 +226,7 @@ class JsonFormatter(logging.Formatter):
             # Python2.7 doesn't have stack_info.
             pass
 
+        log_record: Dict
         try:
             log_record = OrderedDict()
         except NameError:
