@@ -226,12 +226,7 @@ class JsonFormatter(logging.Formatter):
             # Python2.7 doesn't have stack_info.
             pass
 
-        log_record: Dict
-        try:
-            log_record = OrderedDict()
-        except NameError:
-            log_record = {}
-
+        log_record = OrderedDict()
         self.add_fields(log_record, record, message_dict)
         log_record = self.process_log_record(log_record)
 
