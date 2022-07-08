@@ -82,7 +82,7 @@ class JsonFormatter(logging.Formatter):
     def __init__(self, *args, **kwargs):
         """
         :param json_default: a function for encoding non-standard objects
-            as outlined in http://docs.python.org/2/library/json.html
+            as outlined in https://docs.python.org/3/library/json.html
         :param json_encoder: optional custom encoder
         :param json_serializer: a :meth:`json.dumps`-compatible callable
             that will be used to serialize the log record.
@@ -229,11 +229,7 @@ class JsonFormatter(logging.Formatter):
             pass
 
         log_record: Dict[str, Any]
-        try:
-            log_record = OrderedDict()
-        except NameError:
-            log_record = {}
-
+        log_record = OrderedDict()
         self.add_fields(log_record, record, message_dict)
         log_record = self.process_log_record(log_record)
 
