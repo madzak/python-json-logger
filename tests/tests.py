@@ -42,6 +42,20 @@ class TestJsonLogger(unittest.TestCase):
 
         self.assertEqual(logJson["message"], msg)
 
+    def testPercentageFormat(self):
+        fr = jsonlogger.JsonFormatter(
+            # All kind of different styles to check the regex
+            '[%(levelname)8s] %(message)s %(filename)s:%(lineno)d %(asctime)'
+        )
+        self.logHandler.setFormatter(fr)
+
+        msg = "testing logging format"
+        self.logger.info(msg)
+        logJson = json.loads(self.buffer.getvalue())
+
+        self.assertEqual(logJson["message"], msg)
+        self.assertEqual(logJson.keys(), {'levelname', 'message', 'filename', 'lineno', 'asctime'})
+
     def testRenameBaseField(self):
         fr = jsonlogger.JsonFormatter(rename_fields={'message': '@message'})
         self.logHandler.setFormatter(fr)
