@@ -24,20 +24,36 @@ RESERVED_ATTRS: Tuple[str, ...] = (
     'processName', 'relativeCreated', 'stack_info', 'thread', 'threadName')
 
 
-def merge_record_extra(record: logging.LogRecord, target: Dict, reserved: Union[Dict, List]) -> Dict:
+JSONLOGGER_RENAME_FIELDS_ECS: Dict[str, str] = {
+    'exc_info': 'error.type',
+    'exc_text': 'error.message',
+    'funcName': 'log.origin.function',
+    'levelname': 'log.level',
+    'module': 'log.origin.file.name',
+    'name': 'log.logger',
+    'process': 'process.pid',
+    'processName': 'process.name',
+    'thread': 'process.thread.id',
+    'threadName': 'process.thread.name'
+    }
+
+
+def merge_record_extra(record: logging.LogRecord, target: Dict, reserved: Union[Dict, List], rename_fields: Dict[str,str]) -> Dict:
     """
     Merges extra attributes from LogRecord object into target dictionary
 
     :param record: logging.LogRecord
     :param target: dict to update
     :param reserved: dict or list with reserved keys to skip
+    :param rename_fields: an optional dict, used to rename field names in the output.
+            Rename levelname to log.level: {'levelname': 'log.level'}
     """
     for key, value in record.__dict__.items():
         # this allows to have numeric keys
         if (key not in reserved
             and not (hasattr(key, "startswith")
                      and key.startswith('_'))):
-            target[key] = value
+            target[rename_fields.get(key,key)] = value
     return target
 
 
@@ -174,7 +190,7 @@ class JsonFormatter(logging.Formatter):
                 log_record[field] = record.__dict__.get(field)
         log_record.update(self.static_fields)
         log_record.update(message_dict)
-        merge_record_extra(record, log_record, reserved=self._skip_fields)
+        merge_record_extra(record, log_record, reserved=self._skip_fields, rename_fields=self.rename_fields)
 
         if self.timestamp:
             key = self.timestamp if type(self.timestamp) == str else 'timestamp'
