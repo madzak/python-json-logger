@@ -18,6 +18,7 @@ setup(
     author="Zakaria Zajac",
     author_email="zak@madzak.com",
     package_dir={'': 'src'},
+    package_data={"src/pythonjsonlogger": ["py.typed"]},
     packages=find_packages("src", exclude="tests"),
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
     python_requires='>=3.5',
