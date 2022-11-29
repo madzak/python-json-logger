@@ -102,6 +102,7 @@ class JsonFormatter(logging.Formatter):
             outputting the json log record. If string is passed, timestamp will be added
             to log record using string as key. If True boolean is passed, timestamp key
             will be "timestamp". Defaults to False/off.
+        :param dict_as_object: use dict as object of message, if False - dict will be merged
         """
         self.json_default = self._str_to_fn(kwargs.pop("json_default", None))
         self.json_encoder = self._str_to_fn(kwargs.pop("json_encoder", None))
@@ -114,6 +115,7 @@ class JsonFormatter(logging.Formatter):
         reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
         self.timestamp = kwargs.pop("timestamp", False)
+        self.dict_as_object = kwargs.pop("dict_as_object", False)
 
         # super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
@@ -205,8 +207,11 @@ class JsonFormatter(logging.Formatter):
         # FIXME: logging.LogRecord.msg and logging.LogRecord.message in typeshed
         #        are always type of str. We shouldn't need to override that.
         if isinstance(record.msg, dict):  # type: ignore
-            message_dict = record.msg  # type: ignore
-            record.message = None
+            if not self.dict_as_object:
+                message_dict = record.msg  # type: ignore
+                record.message = None
+            else:
+                record.message = record.msg
         else:
             record.message = record.getMessage()
         # only format time if needed
