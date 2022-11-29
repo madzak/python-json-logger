@@ -12,11 +12,7 @@ try:
 except ImportError:
     pass
 
-try:
-    from StringIO import StringIO  # noqa
-except ImportError:
-    # Python 3 Support
-    from io import StringIO
+from io import StringIO
 
 sys.path.append('src/python-json-logger')
 from pythonjsonlogger import jsonlogger
@@ -77,7 +73,6 @@ class TestJsonLogger(unittest.TestCase):
 
         self.assertEqual(logJson["log_stream"], "kafka")
         self.assertEqual(logJson["message"], msg)
-
 
     def testFormatKeys(self):
         supported_keys = [
@@ -257,6 +252,7 @@ class TestJsonLogger(unittest.TestCase):
         self.logger.info(" message", extra=value)
         msg = self.buffer.getvalue()
         self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0]}\n")
+
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:
