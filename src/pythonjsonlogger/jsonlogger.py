@@ -209,7 +209,7 @@ class JsonFormatter(logging.Formatter):
         if isinstance(record.msg, dict):  # type: ignore
             if not self.dict_as_object:
                 message_dict = record.msg  # type: ignore
-                record.message = None
+                record.message = ""
             else:
                 record.message = record.msg
         else:
