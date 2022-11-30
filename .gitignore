@@ -3,7 +3,16 @@
 build
 dist
 *.egg-info
+
+# Tests and validation
 .tox/
+.mypy_cache
+
+# Python's venv
 .env
+.venv
 env
+
+# IDE
 .vscode
+.idea
