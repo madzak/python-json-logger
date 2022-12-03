@@ -206,12 +206,8 @@ class JsonFormatter(logging.Formatter):
         message_dict: Dict[str, Any] = {}
         # FIXME: logging.LogRecord.msg and logging.LogRecord.message in typeshed
         #        are always type of str. We shouldn't need to override that.
-        if isinstance(record.msg, dict):  # type: ignore
-            if not self.dict_as_object:
-                message_dict = record.msg  # type: ignore
-                record.message = ""
-            else:
-                record.message = record.msg
+        if isinstance(record.msg, dict) and self.dict_as_object:
+            message_dict = record.msg
         else:
             record.message = record.getMessage()
         # only format time if needed
