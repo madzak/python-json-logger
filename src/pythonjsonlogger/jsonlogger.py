@@ -24,19 +24,6 @@ RESERVED_ATTRS: Tuple[str, ...] = (
     'processName', 'relativeCreated', 'stack_info', 'thread', 'threadName')
 
 
-JSONLOGGER_RENAME_FIELDS_ECS: Dict[str, str] = {
-    'exc_info': 'error.type',
-    'exc_text': 'error.message',
-    'funcName': 'log.origin.function',
-    'levelname': 'log.level',
-    'module': 'log.origin.file.name',
-    'name': 'log.logger',
-    'process': 'process.pid',
-    'processName': 'process.name',
-    'thread': 'process.thread.id',
-    'threadName': 'process.thread.name'
-    }
-
 
 def merge_record_extra(record: logging.LogRecord, target: Dict, reserved: Union[Dict, List], rename_fields: Dict[str,str]) -> Dict:
     """
