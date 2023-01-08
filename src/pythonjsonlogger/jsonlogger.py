@@ -168,10 +168,8 @@ class JsonFormatter(logging.Formatter):
         Override this method to implement custom logic for adding fields.
         """
         for field in self._required_fields:
-            if field in self.rename_fields:
-                log_record[self.rename_fields[field]] = record.__dict__.get(field)
-            else:
-                log_record[field] = record.__dict__.get(field)
+            log_record[field] = record.__dict__.get(field)
+
         log_record.update(self.static_fields)
         log_record.update(message_dict)
         merge_record_extra(record, log_record, reserved=self._skip_fields)
@@ -179,6 +177,13 @@ class JsonFormatter(logging.Formatter):
         if self.timestamp:
             key = self.timestamp if type(self.timestamp) == str else 'timestamp'
             log_record[key] = datetime.fromtimestamp(record.created, tz=timezone.utc)
+
+        self._perform_rename_log_fields(log_record)
+
+    def _perform_rename_log_fields(self, log_record):
+        for old_field_name, new_field_name in self.rename_fields.items():
+            log_record[new_field_name] = log_record[old_field_name]
+            del log_record[old_field_name]
 
     def process_log_record(self, log_record):
         """
