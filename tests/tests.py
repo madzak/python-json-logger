@@ -202,22 +202,34 @@ class TestJsonLogger(unittest.TestCase):
         logJson = json.loads(self.buffer.getvalue())
         self.assertEqual(logJson.get("custom"), "value")
 
-    def testExcInfo(self):
-        fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
+    def get_traceback_from_exception_followed_by_log_call(self) -> str:
         try:
             raise Exception('test')
         except Exception:
-
             self.logger.exception("hello")
-
-            expected_value = traceback.format_exc()
+            str_traceback = traceback.format_exc()
             # Formatter removes trailing new line
-            if expected_value.endswith('\n'):
-                expected_value = expected_value[:-1]
+            if str_traceback.endswith('\n'):
+                str_traceback = str_traceback[:-1]
 
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("exc_info"), expected_value)
+        return str_traceback
+
+    def testExcInfo(self):
+        fr = jsonlogger.JsonFormatter()
+        self.logHandler.setFormatter(fr)
+        expected_value = self.get_traceback_from_exception_followed_by_log_call()
+
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("exc_info"), expected_value)
+
+    def testExcInfoRenamed(self):
+        fr = jsonlogger.JsonFormatter("%(exc_info)s", rename_fields={"exc_info": "stack_trace"})
+        self.logHandler.setFormatter(fr)
+        expected_value = self.get_traceback_from_exception_followed_by_log_call()
+
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("stack_trace"), expected_value)
+        self.assertEqual(log_json.get("exc_info"), None)
 
     def testEnsureAsciiTrue(self):
         fr = jsonlogger.JsonFormatter()
