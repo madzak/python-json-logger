@@ -62,6 +62,16 @@ class TestJsonLogger(unittest.TestCase):
 
         self.assertEqual(logJson["@message"], msg)
 
+    def testRenameNonexistentField(self):
+        fr = jsonlogger.JsonFormatter(rename_fields={'nonexistent_key': 'new_name'})
+        self.logHandler.setFormatter(fr)
+
+        stderr_watcher = StringIO()
+        sys.stderr = stderr_watcher
+        self.logger.info("testing logging rename")
+
+        self.assertTrue("KeyError: 'nonexistent_key'" in stderr_watcher.getvalue())
+
     def testAddStaticFields(self):
         fr = jsonlogger.JsonFormatter(static_fields={'log_stream': 'kafka'})
 
