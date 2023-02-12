@@ -62,6 +62,16 @@ class TestJsonLogger(unittest.TestCase):
 
         self.assertEqual(log_json["@message"], msg)
 
+    def test_rename_nonexistent_field(self):
+        fr = jsonlogger.JsonFormatter(rename_fields={'nonexistent_key': 'new_name'})
+        self.log_handler.setFormatter(fr)
+
+        stderr_watcher = StringIO()
+        sys.stderr = stderr_watcher
+        self.log.info("testing logging rename")
+
+        self.assertTrue("KeyError: 'nonexistent_key'" in stderr_watcher.getvalue())
+
     def test_add_static_fields(self):
         fr = jsonlogger.JsonFormatter(static_fields={'log_stream': 'kafka'})
 
@@ -133,7 +143,7 @@ class TestJsonLogger(unittest.TestCase):
         self.assertEqual(log_json.get("num"), msg["num"])
         self.assertEqual(log_json.get("5"), msg[5])
         self.assertEqual(log_json.get("nested"), msg["nested"])
-        self.assertEqual(log_json["message"], '')
+        self.assertEqual(log_json["message"], "")
 
     def test_log_extra(self):
         fr = jsonlogger.JsonFormatter()
@@ -203,21 +213,34 @@ class TestJsonLogger(unittest.TestCase):
         log_json = json.loads(self.buffer.getvalue())
         self.assertEqual(log_json.get("custom"), "value")
 
-    def test_exc_info(self):
-        fr = jsonlogger.JsonFormatter()
-        self.log_handler.setFormatter(fr)
+    def get_traceback_from_exception_followed_by_log_call(self) -> str:
         try:
             raise Exception('test')
         except Exception:
             self.log.exception("hello")
-
-            expected_value = traceback.format_exc()
+            str_traceback = traceback.format_exc()
             # Formatter removes trailing new line
-            if expected_value.endswith('\n'):
-                expected_value = expected_value[:-1]
+            if str_traceback.endswith('\n'):
+                str_traceback = str_traceback[:-1]
+
+        return str_traceback
+
+    def test_exc_info(self):
+        fr = jsonlogger.JsonFormatter()
+        self.log_handler.setFormatter(fr)
+        expected_value = self.get_traceback_from_exception_followed_by_log_call()
 
         log_json = json.loads(self.buffer.getvalue())
         self.assertEqual(log_json.get("exc_info"), expected_value)
+
+    def test_exc_info_renamed(self):
+        fr = jsonlogger.JsonFormatter("%(exc_info)s", rename_fields={"exc_info": "stack_trace"})
+        self.log_handler.setFormatter(fr)
+        expected_value = self.get_traceback_from_exception_followed_by_log_call()
+
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("stack_trace"), expected_value)
+        self.assertEqual(log_json.get("exc_info"), None)
 
     def test_ensure_ascii_true(self):
         fr = jsonlogger.JsonFormatter()
