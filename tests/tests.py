@@ -276,6 +276,28 @@ class TestJsonLogger(unittest.TestCase):
         msg = self.buffer.getvalue()
         self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0]}\n")
 
+    def test_rename_reserved_attrs(self):
+        log_format = lambda x: ['%({0:s})s'.format(i) for i in x]
+        reserved_attrs_map = {
+            'exc_info': 'error.type',
+            'exc_text': 'error.message',
+            'funcName': 'log.origin.function',
+            'levelname': 'log.level',
+            'module': 'log.origin.file.name',
+            'processName': 'process.name',
+            'threadName': 'process.thread.name',
+            'msg': 'log.message'
+        }
+
+        custom_format = ' '.join(log_format(reserved_attrs_map.keys()))
+        reserved_attrs = [_ for _ in jsonlogger.RESERVED_ATTRS if _ not in list(reserved_attrs_map.keys())]
+        formatter = jsonlogger.JsonFormatter(custom_format, reserved_attrs=reserved_attrs, rename_fields=reserved_attrs_map)
+        self.log_handler.setFormatter(formatter)
+        self.log.info("message")
+
+        msg = self.buffer.getvalue()
+        self.assertEqual(msg, '{"error.type": null, "error.message": null, "log.origin.function": "test_rename_reserved_attrs", "log.level": "INFO", "log.origin.file.name": "tests", "process.name": "MainProcess", "process.thread.name": "MainThread", "log.message": "message"}\n')
+
 
 if __name__ == '__main__':
     if len(sys.argv[1:]) > 0:
