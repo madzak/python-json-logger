@@ -8,7 +8,7 @@ with open(path.join(this_directory, 'README.md'), encoding='utf-8') as f:
 
 setup(
     name="python-json-logger",
-    version="2.0.4",
+    version="2.0.5",
     url="http://github.com/madzak/python-json-logger",
     license="BSD",
     include_package_data=True,
