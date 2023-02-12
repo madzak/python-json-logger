@@ -12,11 +12,7 @@ try:
 except ImportError:
     pass
 
-try:
-    from StringIO import StringIO  # noqa
-except ImportError:
-    # Python 3 Support
-    from io import StringIO
+from io import StringIO
 
 sys.path.append('src/python-json-logger')
 from pythonjsonlogger import jsonlogger
@@ -130,6 +126,7 @@ class TestJsonLogger(unittest.TestCase):
 
         msg = {"text": "testing logging", "num": 1, 5: "9",
                "nested": {"more": "data"}}
+
         self.log.info(msg)
         log_json = json.loads(self.buffer.getvalue())
         self.assertEqual(log_json.get("text"), msg["text"])
