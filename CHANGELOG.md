@@ -4,9 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.5] - 2023-02-12
+### Added
+- Allow reserved attrs to be renamed - @henkhogan
+- Support added for Python 3.11
+- Now verifying builds in Pypy 3.9 as well
+- Type annotations are now in the package - @louis-jaris
+### Changed
+- Fix rename_fields for exc_info - @guilhermeferrari
+- Cleaned up test file for PEP8 - @lopagela
+- Cleaned up old Python 2 artifacts - @louis-jaris
+- Dropped Python 3.5 support - @idomozes
+- Moved type check via tox into 3.11 run only
+- Added test run in Python3.6 (will keep for a little while longer, but it's EOL so upgrade)
+
 ## [2.0.4] - 2022-07-11
 ### Changed
 - Fix too strict regex for percentage style logging - @aberres
+- 
 
 ## [2.0.3] - 2022-07-08
 ### Added
@@ -50,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 'stack_info' flag in logging calls is now respected in JsonFormatter by [@ghShu](https://github.com/ghShu)
 
 
-[2.0.4]: https://github.com/madzak/python-json-logger/compare/v2.0.2...v2.0.4
+[2.0.5]: https://github.com/madzak/python-json-logger/compare/v2.0.4...v2.0.5
+[2.0.4]: https://github.com/madzak/python-json-logger/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/madzak/python-json-logger/compare/v2.0.2...v2.0.3
 [2.0.2]: https://github.com/madzak/python-json-logger/compare/v2.0.1...v2.0.2
 [2.0.1]: https://github.com/madzak/python-json-logger/compare/v2.0.0...v2.0.1
