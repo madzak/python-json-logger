@@ -133,7 +133,7 @@ class TestJsonLogger(unittest.TestCase):
         self.assertEqual(log_json.get("num"), msg["num"])
         self.assertEqual(log_json.get("5"), msg[5])
         self.assertEqual(log_json.get("nested"), msg["nested"])
-        self.assertEqual(log_json["message"], None)
+        self.assertEqual(log_json["message"], '')
 
     def test_log_extra(self):
         fr = jsonlogger.JsonFormatter()
