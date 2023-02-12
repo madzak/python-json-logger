@@ -21,7 +21,7 @@ setup(
     package_data={"src/pythonjsonlogger": ["py.typed"]},
     packages=find_packages("src", exclude="tests"),
     # https://packaging.python.org/guides/distributing-packages-using-setuptools/#python-requires
-    python_requires='>=3.7',
+    python_requires=">=3.6",
     test_suite="tests.tests",
     classifiers=[
         'Development Status :: 6 - Mature',

@@ -21,60 +21,70 @@ import datetime
 
 class TestJsonLogger(unittest.TestCase):
     def setUp(self):
-        self.logger = logging.getLogger("logging-test-{}".format(random.randint(1, 101)))
-        self.logger.setLevel(logging.DEBUG)
+        self.log = logging.getLogger("logging-test-{}".format(random.randint(1, 101)))
+        self.log.setLevel(logging.DEBUG)
         self.buffer = StringIO()
 
-        self.logHandler = logging.StreamHandler(self.buffer)
-        self.logger.addHandler(self.logHandler)
+        self.log_handler = logging.StreamHandler(self.buffer)
+        self.log.addHandler(self.log_handler)
 
-    def testDefaultFormat(self):
+    def test_default_format(self):
         fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = "testing logging format"
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
 
-        self.assertEqual(logJson["message"], msg)
+        self.assertEqual(log_json["message"], msg)
 
-    def testPercentageFormat(self):
+    def test_percentage_format(self):
         fr = jsonlogger.JsonFormatter(
             # All kind of different styles to check the regex
             '[%(levelname)8s] %(message)s %(filename)s:%(lineno)d %(asctime)'
         )
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = "testing logging format"
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
 
-        self.assertEqual(logJson["message"], msg)
-        self.assertEqual(logJson.keys(), {'levelname', 'message', 'filename', 'lineno', 'asctime'})
+        self.assertEqual(log_json["message"], msg)
+        self.assertEqual(log_json.keys(), {'levelname', 'message', 'filename', 'lineno', 'asctime'})
 
-    def testRenameBaseField(self):
+    def test_rename_base_field(self):
         fr = jsonlogger.JsonFormatter(rename_fields={'message': '@message'})
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = "testing logging format"
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
 
-        self.assertEqual(logJson["@message"], msg)
+        self.assertEqual(log_json["@message"], msg)
 
-    def testAddStaticFields(self):
+    def test_rename_nonexistent_field(self):
+        fr = jsonlogger.JsonFormatter(rename_fields={'nonexistent_key': 'new_name'})
+        self.log_handler.setFormatter(fr)
+
+        stderr_watcher = StringIO()
+        sys.stderr = stderr_watcher
+        self.log.info("testing logging rename")
+
+        self.assertTrue("KeyError: 'nonexistent_key'" in stderr_watcher.getvalue())
+
+    def test_add_static_fields(self):
         fr = jsonlogger.JsonFormatter(static_fields={'log_stream': 'kafka'})
 
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = "testing static fields"
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
 
-        self.assertEqual(logJson["log_stream"], "kafka")
-        self.assertEqual(logJson["message"], msg)
+        self.assertEqual(log_json["log_stream"], "kafka")
+        self.assertEqual(log_json["message"], msg)
 
-    def testFormatKeys(self):
+    def test_format_keys(self):
         supported_keys = [
             'asctime',
             'created',
@@ -99,10 +109,10 @@ class TestJsonLogger(unittest.TestCase):
         custom_format = ' '.join(log_format(supported_keys))
 
         fr = jsonlogger.JsonFormatter(custom_format)
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = "testing logging format"
-        self.logger.info(msg)
+        self.log.info(msg)
         log_msg = self.buffer.getvalue()
         log_json = json.loads(log_msg)
 
@@ -110,85 +120,86 @@ class TestJsonLogger(unittest.TestCase):
             if supported_key in log_json:
                 self.assertTrue(True)
 
-    def testUnknownFormatKey(self):
+    def test_unknown_format_key(self):
         fr = jsonlogger.JsonFormatter('%(unknown_key)s %(message)s')
 
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
         msg = "testing unknown logging format"
         try:
-            self.logger.info(msg)
-        except:
+            self.log.info(msg)
+        except Exception:
             self.assertTrue(False, "Should succeed")
 
-    def testLogADict(self):
+    def test_log_adict(self):
         fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = {"text": "testing logging", "num": 1, 5: "9",
                "nested": {"more": "data"}}
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("text"), msg["text"])
-        self.assertEqual(logJson.get("num"), msg["num"])
-        self.assertEqual(logJson.get("5"), msg[5])
-        self.assertEqual(logJson.get("nested"), msg["nested"])
-        self.assertEqual(logJson["message"], "")
 
-    def testLogExtra(self):
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("text"), msg["text"])
+        self.assertEqual(log_json.get("num"), msg["num"])
+        self.assertEqual(log_json.get("5"), msg[5])
+        self.assertEqual(log_json.get("nested"), msg["nested"])
+        self.assertEqual(log_json["message"], "")
+
+    def test_log_extra(self):
         fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         extra = {"text": "testing logging", "num": 1, 5: "9",
                  "nested": {"more": "data"}}
-        self.logger.info("hello", extra=extra)
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("text"), extra["text"])
-        self.assertEqual(logJson.get("num"), extra["num"])
-        self.assertEqual(logJson.get("5"), extra[5])
-        self.assertEqual(logJson.get("nested"), extra["nested"])
-        self.assertEqual(logJson["message"], "hello")
+        self.log.info("hello", extra=extra)
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("text"), extra["text"])
+        self.assertEqual(log_json.get("num"), extra["num"])
+        self.assertEqual(log_json.get("5"), extra[5])
+        self.assertEqual(log_json.get("nested"), extra["nested"])
+        self.assertEqual(log_json["message"], "hello")
 
-    def testJsonDefaultEncoder(self):
+    def test_json_default_encoder(self):
         fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = {"adate": datetime.datetime(1999, 12, 31, 23, 59),
                "otherdate": datetime.date(1789, 7, 14),
                "otherdatetime": datetime.datetime(1789, 7, 14, 23, 59),
                "otherdatetimeagain": datetime.datetime(1900, 1, 1)}
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("adate"), "1999-12-31T23:59:00")
-        self.assertEqual(logJson.get("otherdate"), "1789-07-14")
-        self.assertEqual(logJson.get("otherdatetime"), "1789-07-14T23:59:00")
-        self.assertEqual(logJson.get("otherdatetimeagain"),
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("adate"), "1999-12-31T23:59:00")
+        self.assertEqual(log_json.get("otherdate"), "1789-07-14")
+        self.assertEqual(log_json.get("otherdatetime"), "1789-07-14T23:59:00")
+        self.assertEqual(log_json.get("otherdatetimeagain"),
                          "1900-01-01T00:00:00")
 
     @unittest.mock.patch('time.time', return_value=1500000000.0)
-    def testJsonDefaultEncoderWithTimestamp(self, time_mock):
+    def test_json_default_encoder_with_timestamp(self, time_mock):
         fr = jsonlogger.JsonFormatter(timestamp=True)
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
-        self.logger.info("Hello")
+        self.log.info("Hello")
 
         self.assertTrue(time_mock.called)
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("timestamp"), "2017-07-14T02:40:00+00:00")
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("timestamp"), "2017-07-14T02:40:00+00:00")
 
-    def testJsonCustomDefault(self):
+    def test_json_custom_default(self):
         def custom(o):
             return "very custom"
         fr = jsonlogger.JsonFormatter(json_default=custom)
-        self.logHandler.setFormatter(fr)
+        self.log_handler.setFormatter(fr)
 
         msg = {"adate": datetime.datetime(1999, 12, 31, 23, 59),
                "normal": "value"}
-        self.logger.info(msg)
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("adate"), "very custom")
-        self.assertEqual(logJson.get("normal"), "value")
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("adate"), "very custom")
+        self.assertEqual(log_json.get("normal"), "value")
 
-    def testJsonCustomLogicAddsField(self):
+    def test_json_custom_logic_adds_field(self):
         class CustomJsonFormatter(jsonlogger.JsonFormatter):
 
             def process_log_record(self, log_record):
@@ -197,43 +208,55 @@ class TestJsonLogger(unittest.TestCase):
                 # style
                 return jsonlogger.JsonFormatter.process_log_record(self, log_record)
 
-        self.logHandler.setFormatter(CustomJsonFormatter())
-        self.logger.info("message")
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("custom"), "value")
+        self.log_handler.setFormatter(CustomJsonFormatter())
+        self.log.info("message")
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("custom"), "value")
 
-    def testExcInfo(self):
-        fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
+    def get_traceback_from_exception_followed_by_log_call(self) -> str:
         try:
             raise Exception('test')
         except Exception:
-
-            self.logger.exception("hello")
-
-            expected_value = traceback.format_exc()
+            self.log.exception("hello")
+            str_traceback = traceback.format_exc()
             # Formatter removes trailing new line
-            if expected_value.endswith('\n'):
-                expected_value = expected_value[:-1]
+            if str_traceback.endswith('\n'):
+                str_traceback = str_traceback[:-1]
 
-        logJson = json.loads(self.buffer.getvalue())
-        self.assertEqual(logJson.get("exc_info"), expected_value)
+        return str_traceback
 
-    def testEnsureAsciiTrue(self):
+    def test_exc_info(self):
         fr = jsonlogger.JsonFormatter()
-        self.logHandler.setFormatter(fr)
-        self.logger.info('Привет')
+        self.log_handler.setFormatter(fr)
+        expected_value = self.get_traceback_from_exception_followed_by_log_call()
+
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("exc_info"), expected_value)
+
+    def test_exc_info_renamed(self):
+        fr = jsonlogger.JsonFormatter("%(exc_info)s", rename_fields={"exc_info": "stack_trace"})
+        self.log_handler.setFormatter(fr)
+        expected_value = self.get_traceback_from_exception_followed_by_log_call()
+
+        log_json = json.loads(self.buffer.getvalue())
+        self.assertEqual(log_json.get("stack_trace"), expected_value)
+        self.assertEqual(log_json.get("exc_info"), None)
+
+    def test_ensure_ascii_true(self):
+        fr = jsonlogger.JsonFormatter()
+        self.log_handler.setFormatter(fr)
+        self.log.info('Привет')
         msg = self.buffer.getvalue().split('"message": "', 1)[1].split('"', 1)[0]
         self.assertEqual(msg, r"\u041f\u0440\u0438\u0432\u0435\u0442")
 
-    def testEnsureAsciiFalse(self):
+    def test_ensure_ascii_false(self):
         fr = jsonlogger.JsonFormatter(json_ensure_ascii=False)
-        self.logHandler.setFormatter(fr)
-        self.logger.info('Привет')
+        self.log_handler.setFormatter(fr)
+        self.log.info('Привет')
         msg = self.buffer.getvalue().split('"message": "', 1)[1].split('"', 1)[0]
         self.assertEqual(msg, "Привет")
 
-    def testCustomObjectSerialization(self):
+    def test_custom_object_serialization(self):
         def encode_complex(z):
             if isinstance(z, complex):
                 return (z.real, z.imag)
@@ -243,13 +266,13 @@ class TestJsonLogger(unittest.TestCase):
 
         formatter = jsonlogger.JsonFormatter(json_default=encode_complex,
                                              json_encoder=json.JSONEncoder)
-        self.logHandler.setFormatter(formatter)
+        self.log_handler.setFormatter(formatter)
 
         value = {
             "special": complex(3, 8),
         }
 
-        self.logger.info(" message", extra=value)
+        self.log.info(" message", extra=value)
         msg = self.buffer.getvalue()
         self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0]}\n")
 
