@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.6] - 2023-02-14
+### Changed
+- Parameter `rename_fields` in merge_record_extra is now optional - @afallou
+
 ## [2.0.5] - 2023-02-12
 ### Added
 - Allow reserved attrs to be renamed - @henkhogan
@@ -65,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 'stack_info' flag in logging calls is now respected in JsonFormatter by [@ghShu](https://github.com/ghShu)
 
 
+[2.0.6]: https://github.com/madzak/python-json-logger/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/madzak/python-json-logger/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/madzak/python-json-logger/compare/v2.0.3...v2.0.4
 [2.0.3]: https://github.com/madzak/python-json-logger/compare/v2.0.2...v2.0.3
