@@ -169,6 +169,6 @@ Sample JSON with a full formatter (basically the log message from the unit test)
 External Examples
 =================
 
-- [Wesley Tanaka - Structured log files in Python using python-json-logger](https://wtanaka.com/node/8201)
+- [Wesley Tanaka - Structured log files in Python using python-json-logger](http://web.archive.org/web/20201130054012/https://wtanaka.com/node/8201)
 
 - [Archive](https://web.archive.org/web/20201130054012/https://wtanaka.com/node/8201)
