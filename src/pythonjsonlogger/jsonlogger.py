@@ -9,7 +9,7 @@ from datetime import date, datetime, time, timezone
 import traceback
 import importlib
 
-from typing import Any, Dict, Union, List, Tuple
+from typing import Any, Dict, Optional, Union, List, Tuple
 
 from inspect import istraceback
 
@@ -25,7 +25,12 @@ RESERVED_ATTRS: Tuple[str, ...] = (
 
 
 
-def merge_record_extra(record: logging.LogRecord, target: Dict, reserved: Union[Dict, List], rename_fields: Dict[str,str]) -> Dict:
+def merge_record_extra(
+    record: logging.LogRecord,
+    target: Dict,
+    reserved: Union[Dict, List],
+    rename_fields: Optional[Dict[str,str]] = None,
+) -> Dict:
     """
     Merges extra attributes from LogRecord object into target dictionary
 
@@ -35,6 +40,8 @@ def merge_record_extra(record: logging.LogRecord, target: Dict, reserved: Union[
     :param rename_fields: an optional dict, used to rename field names in the output.
             Rename levelname to log.level: {'levelname': 'log.level'}
     """
+    if rename_fields is None:
+        rename_fields = {}
     for key, value in record.__dict__.items():
         # this allows to have numeric keys
         if (key not in reserved
