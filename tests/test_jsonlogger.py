@@ -296,15 +296,15 @@ class TestJsonLogger(unittest.TestCase):
         self.log.info("message")
 
         msg = self.buffer.getvalue()
-        self.assertEqual(msg, '{"error.type": null, "error.message": null, "log.origin.function": "test_rename_reserved_attrs", "log.level": "INFO", "log.origin.file.name": "tests", "process.name": "MainProcess", "process.thread.name": "MainThread", "log.message": "message"}\n')
+        self.assertEqual(msg, '{"error.type": null, "error.message": null, "log.origin.function": "test_rename_reserved_attrs", "log.level": "INFO", "log.origin.file.name": "test_jsonlogger", "process.name": "MainProcess", "process.thread.name": "MainThread", "log.message": "message"}\n')
 
     def test_merge_record_extra(self):
         record = logging.LogRecord("name", level=1, pathname="", lineno=1, msg="Some message", args=None, exc_info=None)
         output = jsonlogger.merge_record_extra(record, target=dict(foo="bar"), reserved=[])
         self.assertIn("foo", output)
         self.assertIn("msg", output)
-        self.assertEquals(output["foo"], "bar")
-        self.assertEquals(output["msg"], "Some message")
+        self.assertEqual(output["foo"], "bar")
+        self.assertEqual(output["msg"], "Some message")
 
 
 if __name__ == '__main__':
