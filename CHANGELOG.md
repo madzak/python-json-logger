@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.7] - 2023-02-21
+### Changed
+- Fix inclusion of py.typed in pip packages - @sth
+- Added pytest support with test file rename. Migrated to assertEqual
+
 ## [2.0.6] - 2023-02-14
 ### Changed
 - Parameter `rename_fields` in merge_record_extra is now optional - @afallou
@@ -69,6 +74,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - 'stack_info' flag in logging calls is now respected in JsonFormatter by [@ghShu](https://github.com/ghShu)
 
 
+[2.0.7]: https://github.com/madzak/python-json-logger/compare/v2.0.6...v2.0.7
 [2.0.6]: https://github.com/madzak/python-json-logger/compare/v2.0.5...v2.0.6
 [2.0.5]: https://github.com/madzak/python-json-logger/compare/v2.0.4...v2.0.5
 [2.0.4]: https://github.com/madzak/python-json-logger/compare/v2.0.3...v2.0.4
