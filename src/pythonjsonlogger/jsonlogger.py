@@ -1,15 +1,14 @@
-'''
+"""
 This library is provided to allow standard python logging
 to output log data as JSON formatted strings
-'''
+"""
 import logging
 import json
 import re
-from datetime import date, datetime, time, timezone
 import traceback
 import importlib
-
-from typing import Any, Dict, Optional, Union, List, Tuple
+from datetime import date, datetime, time, timezone
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 from inspect import istraceback
 
@@ -18,18 +17,38 @@ from collections import OrderedDict
 # skip natural LogRecord attributes
 # http://docs.python.org/library/logging.html#logrecord-attributes
 RESERVED_ATTRS: Tuple[str, ...] = (
-    'args', 'asctime', 'created', 'exc_info', 'exc_text', 'filename',
-    'funcName', 'levelname', 'levelno', 'lineno', 'module',
-    'msecs', 'message', 'msg', 'name', 'pathname', 'process',
-    'processName', 'relativeCreated', 'stack_info', 'thread', 'threadName')
+    "args",
+    "asctime",
+    "created",
+    "exc_info",
+    "exc_text",
+    "filename",
+    "funcName",
+    "levelname",
+    "levelno",
+    "lineno",
+    "module",
+    "msecs",
+    "message",
+    "msg",
+    "name",
+    "pathname",
+    "process",
+    "processName",
+    "relativeCreated",
+    "stack_info",
+    "thread",
+    "threadName",
+)
 
+OptionalCallableOrStr = Optional[Union[Callable, str]]
 
 
 def merge_record_extra(
     record: logging.LogRecord,
     target: Dict,
     reserved: Union[Dict, List],
-    rename_fields: Optional[Dict[str,str]] = None,
+    rename_fields: Optional[Dict[str, str]] = None,
 ) -> Dict:
     """
     Merges extra attributes from LogRecord object into target dictionary
@@ -44,10 +63,10 @@ def merge_record_extra(
         rename_fields = {}
     for key, value in record.__dict__.items():
         # this allows to have numeric keys
-        if (key not in reserved
-            and not (hasattr(key, "startswith")
-                     and key.startswith('_'))):
-            target[rename_fields.get(key,key)] = value
+        if key not in reserved and not (
+            hasattr(key, "startswith") and key.startswith("_")
+        ):
+            target[rename_fields.get(key, key)] = value
     return target
 
 
@@ -61,11 +80,9 @@ class JsonEncoder(json.JSONEncoder):
             return self.format_datetime_obj(obj)
 
         elif istraceback(obj):
-            return ''.join(traceback.format_tb(obj)).strip()
+            return "".join(traceback.format_tb(obj)).strip()
 
-        elif type(obj) == Exception \
-                or isinstance(obj, Exception) \
-                or type(obj) == type:
+        elif type(obj) == Exception or isinstance(obj, Exception) or type(obj) == type:
             return str(obj)
 
         try:
@@ -89,22 +106,34 @@ class JsonFormatter(logging.Formatter):
     json default encoder
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        *args: Any,
+        json_default: OptionalCallableOrStr = None,
+        json_encoder: OptionalCallableOrStr = None,
+        json_serialiser: Union[Callable, str] = json.dumps,
+        json_indent: Optional[Union[int, str]] = None,
+        json_ensure_ascii: bool = True,
+        prefix: str = "",
+        rename_fields: Optional[dict] = None,
+        static_fields: Optional[dict] = None,
+        reserved_attrs: Tuple[str, ...] = RESERVED_ATTRS,
+        timestamp: Union[bool, str] = False,
+        **kwargs: Any
+    ):
         """
         :param json_default: a function for encoding non-standard objects
             as outlined in https://docs.python.org/3/library/json.html
         :param json_encoder: optional custom encoder
         :param json_serializer: a :meth:`json.dumps`-compatible callable
             that will be used to serialize the log record.
-        :param json_indent: an optional :meth:`json.dumps`-compatible numeric value
-            that will be used to customize the indent of the output json.
+        :param json_indent: indent parameter for json.dumps
+        :param json_ensure_ascii: ensure_ascii parameter for json.dumps
         :param prefix: an optional string prefix added at the beginning of
             the formatted string
         :param rename_fields: an optional dict, used to rename field names in the output.
             Rename message to @message: {'message': '@message'}
         :param static_fields: an optional dict, used to add fields with static values to all logs
-        :param json_indent: indent parameter for json.dumps
-        :param json_ensure_ascii: ensure_ascii parameter for json.dumps
         :param reserved_attrs: an optional list of fields that will be skipped when
             outputting json log record. Defaults to all log record attributes:
             http://docs.python.org/library/logging.html#logrecord-attributes
@@ -113,17 +142,16 @@ class JsonFormatter(logging.Formatter):
             to log record using string as key. If True boolean is passed, timestamp key
             will be "timestamp". Defaults to False/off.
         """
-        self.json_default = self._str_to_fn(kwargs.pop("json_default", None))
-        self.json_encoder = self._str_to_fn(kwargs.pop("json_encoder", None))
-        self.json_serializer = self._str_to_fn(kwargs.pop("json_serializer", json.dumps))
-        self.json_indent = kwargs.pop("json_indent", None)
-        self.json_ensure_ascii = kwargs.pop("json_ensure_ascii", True)
-        self.prefix = kwargs.pop("prefix", "")
-        self.rename_fields = kwargs.pop("rename_fields", {})
-        self.static_fields = kwargs.pop("static_fields", {})
-        reserved_attrs = kwargs.pop("reserved_attrs", RESERVED_ATTRS)
+        self.json_default = self._str_to_fn(json_default)
+        self.json_encoder = self._str_to_fn(json_encoder)
+        self.json_serializer = self._str_to_fn(json_serialiser)
+        self.json_indent = json_indent
+        self.json_ensure_ascii = json_ensure_ascii
+        self.prefix = prefix
+        self.rename_fields = rename_fields or {}
+        self.static_fields = static_fields or {}
         self.reserved_attrs = dict(zip(reserved_attrs, reserved_attrs))
-        self.timestamp = kwargs.pop("timestamp", False)
+        self.timestamp = timestamp
 
         # super(JsonFormatter, self).__init__(*args, **kwargs)
         logging.Formatter.__init__(self, *args, **kwargs)
@@ -131,8 +159,7 @@ class JsonFormatter(logging.Formatter):
             self.json_encoder = JsonEncoder
 
         self._required_fields = self.parse()
-        self._skip_fields = dict(zip(self._required_fields,
-                                     self._required_fields))
+        self._skip_fields = dict(zip(self._required_fields, self._required_fields))
         self._skip_fields.update(self.reserved_attrs)
 
     def _str_to_fn(self, fn_as_str):
@@ -146,7 +173,7 @@ class JsonFormatter(logging.Formatter):
         if not isinstance(fn_as_str, str):
             return fn_as_str
 
-        path, _, function = fn_as_str.rpartition('.')
+        path, _, function = fn_as_str.rpartition(".")
         module = importlib.import_module(path)
         return getattr(module, function)
 
@@ -158,22 +185,27 @@ class JsonFormatter(logging.Formatter):
         to include in all log messages.
         """
         if isinstance(self._style, logging.StringTemplateStyle):
-            formatter_style_pattern = re.compile(r'\$\{(.+?)\}', re.IGNORECASE)
+            formatter_style_pattern = re.compile(r"\$\{(.+?)\}", re.IGNORECASE)
         elif isinstance(self._style, logging.StrFormatStyle):
-            formatter_style_pattern = re.compile(r'\{(.+?)\}', re.IGNORECASE)
+            formatter_style_pattern = re.compile(r"\{(.+?)\}", re.IGNORECASE)
         # PercentStyle is parent class of StringTemplateStyle and StrFormatStyle so
         # it needs to be checked last.
         elif isinstance(self._style, logging.PercentStyle):
-            formatter_style_pattern = re.compile(r'%\((.+?)\)', re.IGNORECASE)
+            formatter_style_pattern = re.compile(r"%\((.+?)\)", re.IGNORECASE)
         else:
-            raise ValueError('Invalid format: %s' % self._fmt)
+            raise ValueError("Invalid format: %s" % self._fmt)
 
         if self._fmt:
             return formatter_style_pattern.findall(self._fmt)
         else:
             return []
 
-    def add_fields(self, log_record: Dict[str, Any], record: logging.LogRecord, message_dict: Dict[str, Any]) -> None:
+    def add_fields(
+        self,
+        log_record: Dict[str, Any],
+        record: logging.LogRecord,
+        message_dict: Dict[str, Any],
+    ) -> None:
         """
         Override this method to implement custom logic for adding fields.
         """
@@ -182,10 +214,15 @@ class JsonFormatter(logging.Formatter):
 
         log_record.update(self.static_fields)
         log_record.update(message_dict)
-        merge_record_extra(record, log_record, reserved=self._skip_fields, rename_fields=self.rename_fields)
+        merge_record_extra(
+            record,
+            log_record,
+            reserved=self._skip_fields,
+            rename_fields=self.rename_fields,
+        )
 
         if self.timestamp:
-            key = self.timestamp if type(self.timestamp) == str else 'timestamp'
+            key = self.timestamp if type(self.timestamp) == str else "timestamp"
             log_record[key] = datetime.fromtimestamp(record.created, tz=timezone.utc)
 
         self._perform_rename_log_fields(log_record)
@@ -204,11 +241,13 @@ class JsonFormatter(logging.Formatter):
 
     def jsonify_log_record(self, log_record):
         """Returns a json string of the log record."""
-        return self.json_serializer(log_record,
-                                    default=self.json_default,
-                                    cls=self.json_encoder,
-                                    indent=self.json_indent,
-                                    ensure_ascii=self.json_ensure_ascii)
+        return self.json_serializer(
+            log_record,
+            default=self.json_default,
+            cls=self.json_encoder,
+            indent=self.json_indent,
+            ensure_ascii=self.json_ensure_ascii,
+        )
 
     def serialize_log_record(self, log_record: Dict[str, Any]) -> str:
         """Returns the final representation of the log record."""
@@ -230,14 +269,14 @@ class JsonFormatter(logging.Formatter):
 
         # Display formatted exception, but allow overriding it in the
         # user-supplied dict.
-        if record.exc_info and not message_dict.get('exc_info'):
-            message_dict['exc_info'] = self.formatException(record.exc_info)
-        if not message_dict.get('exc_info') and record.exc_text:
-            message_dict['exc_info'] = record.exc_text
+        if record.exc_info and not message_dict.get("exc_info"):
+            message_dict["exc_info"] = self.formatException(record.exc_info)
+        if not message_dict.get("exc_info") and record.exc_text:
+            message_dict["exc_info"] = record.exc_text
         # Display formatted record of stack frames
         # default format is a string returned from :func:`traceback.print_stack`
-        if record.stack_info and not message_dict.get('stack_info'):
-            message_dict['stack_info'] = self.formatStack(record.stack_info)
+        if record.stack_info and not message_dict.get("stack_info"):
+            message_dict["stack_info"] = self.formatStack(record.stack_info)
 
         log_record: Dict[str, Any] = OrderedDict()
         self.add_fields(log_record, record, message_dict)
