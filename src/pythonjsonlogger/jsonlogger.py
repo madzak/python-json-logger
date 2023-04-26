@@ -228,9 +228,9 @@ class JsonFormatter(logging.Formatter):
         self._perform_rename_log_fields(log_record)
 
     def _perform_rename_log_fields(self, log_record):
-        for old_field_name, new_field_name in self.rename_fields.items():
-            log_record[new_field_name] = log_record[old_field_name]
-            del log_record[old_field_name]
+        """Perform a substitution in place to maintain the order"""
+        for key, value in list(log_record.items()):
+            log_record[self.rename_fields.get(key, key)] = log_record.pop(key)
 
     def process_log_record(self, log_record):
         """
