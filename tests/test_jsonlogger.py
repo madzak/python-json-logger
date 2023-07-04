@@ -41,7 +41,7 @@ class TestJsonLogger(unittest.TestCase):
     def test_percentage_format(self):
         fr = jsonlogger.JsonFormatter(
             # All kind of different styles to check the regex
-            '[%(levelname)8s] %(message)s %(filename)s:%(lineno)d %(asctime)'
+            '[%(levelname)8s] %(message)s %(filename)s:%(lineno)d %(asctime) %(taskName)'
         )
         self.log_handler.setFormatter(fr)
 
@@ -50,7 +50,7 @@ class TestJsonLogger(unittest.TestCase):
         log_json = json.loads(self.buffer.getvalue())
 
         self.assertEqual(log_json["message"], msg)
-        self.assertEqual(log_json.keys(), {'levelname', 'message', 'filename', 'lineno', 'asctime'})
+        self.assertEqual(log_json.keys(), {'levelname', 'message', 'filename', 'lineno', 'asctime', 'taskName'})
 
     def test_rename_base_field(self):
         fr = jsonlogger.JsonFormatter(rename_fields={'message': '@message'})
@@ -274,7 +274,7 @@ class TestJsonLogger(unittest.TestCase):
 
         self.log.info(" message", extra=value)
         msg = self.buffer.getvalue()
-        self.assertEqual(msg, "{\"message\": \" message\", \"special\": [3.0, 8.0]}\n")
+        self.assertEqual(msg, "{\"message\": \" message\", \"taskName\": null, \"special\": [3.0, 8.0]}\n")
 
     def test_rename_reserved_attrs(self):
         log_format = lambda x: ['%({0:s})s'.format(i) for i in x]
@@ -296,7 +296,7 @@ class TestJsonLogger(unittest.TestCase):
         self.log.info("message")
 
         msg = self.buffer.getvalue()
-        self.assertEqual(msg, '{"error.type": null, "error.message": null, "log.origin.function": "test_rename_reserved_attrs", "log.level": "INFO", "log.origin.file.name": "test_jsonlogger", "process.name": "MainProcess", "process.thread.name": "MainThread", "log.message": "message"}\n')
+        self.assertEqual(msg, '{"taskName": null, "error.type": null, "error.message": null, "log.origin.function": "test_rename_reserved_attrs", "log.level": "INFO", "log.origin.file.name": "test_jsonlogger", "process.name": "MainProcess", "process.thread.name": "MainThread", "log.message": "message"}\n')
 
     def test_merge_record_extra(self):
         record = logging.LogRecord("name", level=1, pathname="", lineno=1, msg="Some message", args=None, exc_info=None)
