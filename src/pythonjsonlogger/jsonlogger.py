@@ -39,6 +39,7 @@ RESERVED_ATTRS: Tuple[str, ...] = (
     "stack_info",
     "thread",
     "threadName",
+    "taskName",
 )
 
 OptionalCallableOrStr = Optional[Union[Callable, str]]
