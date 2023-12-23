@@ -56,21 +56,24 @@ class TestJsonLogger(unittest.TestCase):
         fr = jsonlogger.JsonFormatter(rename_fields={'message': '@message'})
         self.log_handler.setFormatter(fr)
 
-        msg = "testing logging format"
+        msg = "testing logging rename"
         self.log.info(msg)
         log_json = json.loads(self.buffer.getvalue())
 
+        self.assertNotIn("message", log_json)
+        self.assertIn("@message", log_json)
         self.assertEqual(log_json["@message"], msg)
 
     def test_rename_nonexistent_field(self):
         fr = jsonlogger.JsonFormatter(rename_fields={'nonexistent_key': 'new_name'})
         self.log_handler.setFormatter(fr)
 
-        stderr_watcher = StringIO()
-        sys.stderr = stderr_watcher
-        self.log.info("testing logging rename")
+        msg = "testing logging rename"
+        self.log.info(msg)
+        log_json = json.loads(self.buffer.getvalue())
 
-        self.assertTrue("KeyError: 'nonexistent_key'" in stderr_watcher.getvalue())
+        self.assertNotIn("nonexistent_key", log_json)
+        self.assertNotIn("new_name", log_json)
 
     def test_add_static_fields(self):
         fr = jsonlogger.JsonFormatter(static_fields={'log_stream': 'kafka'})
