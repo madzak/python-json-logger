@@ -3,8 +3,8 @@ This library is provided to allow standard python logging
 to output log data as JSON formatted strings
 """
 import logging
-import json
 import re
+import sys
 import traceback
 import importlib
 from datetime import date, datetime, time, timezone
@@ -40,6 +40,12 @@ RESERVED_ATTRS: Tuple[str, ...] = (
     "thread",
     "threadName",
 )
+
+if sys.version_info >= (3, 12):
+    RESERVED_ATTRS = (
+        *RESERVED_ATTRS,
+        "taskName",
+    )
 
 OptionalCallableOrStr = Optional[Union[Callable, str]]
 
