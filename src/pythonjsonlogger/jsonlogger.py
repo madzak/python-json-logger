@@ -82,7 +82,7 @@ class JsonEncoder(json.JSONEncoder):
         elif istraceback(obj):
             return "".join(traceback.format_tb(obj)).strip()
 
-        elif type(obj) == Exception or isinstance(obj, Exception) or type(obj) == type:
+        elif isinstance(obj, Exception):
             return str(obj)
 
         try:
@@ -222,7 +222,7 @@ class JsonFormatter(logging.Formatter):
         )
 
         if self.timestamp:
-            key = self.timestamp if type(self.timestamp) == str else "timestamp"
+            key = self.timestamp if isinstance(self.timestamp, str) else "timestamp"
             log_record[key] = datetime.fromtimestamp(record.created, tz=timezone.utc)
 
         self._perform_rename_log_fields(log_record)
