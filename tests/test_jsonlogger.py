@@ -176,13 +176,17 @@ class TestJsonLogger(unittest.TestCase):
                          "1900-01-01T00:00:00")
 
     @unittest.mock.patch('time.time', return_value=1500000000.0)
-    def test_json_default_encoder_with_timestamp(self, time_mock):
+    @unittest.mock.patch('time.time_ns', return_value=1500000000000000000)
+    def test_json_default_encoder_with_timestamp(self, time_ns_mock, time_mock):
         fr = jsonlogger.JsonFormatter(timestamp=True)
         self.log_handler.setFormatter(fr)
 
         self.log.info("Hello")
-
-        self.assertTrue(time_mock.called)
+        
+        if sys.version_info < (3, 13):
+            self.assertTrue(time_mock.called)
+        else:
+            self.assertTrue(time_ns_mock.called)
         log_json = json.loads(self.buffer.getvalue())
         self.assertEqual(log_json.get("timestamp"), "2017-07-14T02:40:00+00:00")
 
