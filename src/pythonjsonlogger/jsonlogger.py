@@ -162,7 +162,7 @@ class JsonFormatter(logging.Formatter):
         self._skip_fields = dict(zip(self._required_fields, self._required_fields))
         self._skip_fields.update(self.reserved_attrs)
 
-    def _str_to_fn(self, fn_as_str):
+    def _str_to_fn(self, fn_as_str: str) -> Union[Any, Callable]:
         """
         If the argument is not a string, return whatever was passed in.
         Parses a string such as package.module.function, imports the module
@@ -172,10 +172,9 @@ class JsonFormatter(logging.Formatter):
         """
         if not isinstance(fn_as_str, str):
             return fn_as_str
-
-        path, _, function = fn_as_str.rpartition(".")
+        path, _, _function = fn_as_str.rpartition(".")
         module = importlib.import_module(path)
-        return getattr(module, function)
+        return getattr(module, _function)
 
     def parse(self) -> List[str]:
         """
@@ -197,8 +196,7 @@ class JsonFormatter(logging.Formatter):
 
         if self._fmt:
             return formatter_style_pattern.findall(self._fmt)
-        else:
-            return []
+        return []
 
     def add_fields(
         self,
@@ -227,19 +225,19 @@ class JsonFormatter(logging.Formatter):
 
         self._perform_rename_log_fields(log_record)
 
-    def _perform_rename_log_fields(self, log_record):
+    def _perform_rename_log_fields(self, log_record: Dict[str, Any]) -> None:
         for old_field_name, new_field_name in self.rename_fields.items():
             log_record[new_field_name] = log_record[old_field_name]
             del log_record[old_field_name]
 
-    def process_log_record(self, log_record):
+    def process_log_record(self, log_record: Dict[str, Any]):
         """
         Override this method to implement custom logic
         on the possibly ordered dictionary.
         """
         return log_record
 
-    def jsonify_log_record(self, log_record):
+    def jsonify_log_record(self, log_record: Dict[str, Any]):
         """Returns a json string of the log record."""
         return self.json_serializer(
             log_record,
